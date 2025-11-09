@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>입고 목록 상세보기</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="layout/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <div th:replace="layout/header :: header"></div>
+        <div class="content">
+            <!-- 입고 상세보기 화면 -->
+            <div id="inbound-detail">
+                <div class="form-container">
+                    <h3 style="margin-bottom: 20px; text-align: center;">입고 상세 정보</h3>
+
+                    <div class="form-group">
+                        <label>입고번호</label>
+                        <div class="info-text">IN-20241028-001</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>입고일자</label>
+                        <div class="info-text">2024-10-28</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>상품명</label>
+                        <div class="info-text">A제품 (PRD-001)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>입고수량</label>
+                        <div class="info-text" style="background: #d4edda; color: #155724; font-weight: bold;">100개</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>공급업체</label>
+                        <div class="info-text">ㅇㅇ업체</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>등록자</label>
+                        <div class="info-text">홍길동</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>등록일시</label>
+                        <div class="info-text">2024-10-28 14:30:25</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>비고</label>
+                        <div class="info-text">정상 입고 처리</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary" data-screen="inbound-list">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

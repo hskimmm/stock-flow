@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>입고 등록</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="layout/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <div th:replace="layout/header :: header"></div>
+        <div class="content">
+            <!-- 입고 등록 화면 -->
+            <div id="inbound-add">
+                <div class="form-container">
+                    <div class="form-group">
+                        <label class="required">입고일자</label>
+                        <input type="date" value="2024-10-28">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">상품선택</label>
+                        <select>
+                            <option>선택하세요</option>
+                            <option>A제품 (현재고: 150개)</option>
+                            <option>B제품 (현재고: 30개)</option>
+                            <option>C제품 (현재고: 0개)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">입고수량</label>
+                        <input type="number" placeholder="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>공급업체</label>
+                        <input type="text" placeholder="공급업체명">
+                    </div>
+
+                    <div class="form-group">
+                        <label>비고</label>
+                        <textarea placeholder="추가 정보를 입력하세요"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary">입고 등록</button>
+                        <button class="btn" style="background: #95a5a6; color: white;" data-screen="inbound-list">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

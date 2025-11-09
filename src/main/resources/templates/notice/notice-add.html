@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="layout/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <div th:replace="layout/header :: header"></div>
+        <div class="content">
+            <!-- 공지사항 작성 화면 -->
+            <div id="notice-add" class="screen">
+                <div class="form-container" style="max-width: 800px;">
+                    <h3 style="margin-bottom: 20px; text-align: center;">공지사항 작성</h3>
+
+                    <div class="form-group">
+                        <label class="required">구분</label>
+                        <select>
+                            <option>일반</option>
+                            <option>안내</option>
+                            <option>긴급</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">제목</label>
+                        <input type="text" placeholder="제목을 입력하세요">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">내용</label>
+                        <textarea style="min-height: 300px;" placeholder="내용을 입력하세요"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>파일 첨부</label>
+                        <div class="file-upload-area" onclick="document.getElementById('notice-file-input').click()">
+                            <input type="file" id="notice-file-input" multiple onchange="handleFileSelect(this)">
+                            <div style="color: #7f8c8d;">
+                                📎 클릭하여 파일을 선택하거나 드래그하세요<br>
+                                <small>최대 10MB, 최대 5개 파일</small>
+                            </div>
+                        </div>
+                        <div class="file-list" id="notice-file-list"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" style="width: auto; margin-right: 5px;">
+                            상단 고정
+                        </label>
+                        <div class="hint">체크하면 목록 상단에 항상 표시됩니다</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary">등록</button>
+                        <button class="btn" style="background: #95a5a6; color: white;" onclick="showScreen('notice-list')">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>입고 내역</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="layout/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <div th:replace="layout/header :: header"></div>
+        <div class="content">
+            <!-- 입고 내역 화면 -->
+            <div id="inbound-list">
+                <div class="table-header">
+                    <div class="search-box">
+                        <input type="date" value="2024-10-01">
+                        <span style="padding: 10px;">~</span>
+                        <input type="date" value="2024-10-28">
+                        <button class="btn btn-primary">검색</button>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>입고일자</th>
+                        <th>상품명</th>
+                        <th>입고수량</th>
+                        <th>공급업체</th>
+                        <th>등록자</th>
+                        <th>상세</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>2024-10-28</td>
+                        <td>A제품</td>
+                        <td>100개</td>
+                        <td>ㅇㅇ업체</td>
+                        <td>홍길동</td>
+                        <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/inbound/detail}'|">보기</button></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2024-10-27</td>
+                        <td>B제품</td>
+                        <td>50개</td>
+                        <td>ㅁㅁ업체</td>
+                        <td>김철수</td>
+                        <td><button class="btn btn-primary" style="padding: 5px 10px;" data-screen="inbound-detail">보기</button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2024-10-26</td>
+                        <td>C제품</td>
+                        <td>200개</td>
+                        <td>ㄱㄱ업체</td>
+                        <td>이영희</td>
+                        <td><button class="btn btn-primary" style="padding: 5px 10px;" data-screen="inbound-detail">보기</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

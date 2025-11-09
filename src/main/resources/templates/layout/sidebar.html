@@ -1,0 +1,75 @@
+<div class="sidebar" th:fragment="sidebar">
+  <div class="logo">📦 재고관리 시스템</div>
+  <ul class="menu">
+    <li class="menu-item" th:classappend="${menuActive == 'dashboard'} ? 'active' : ''">
+      <a th:href="@{/dashboard}">📋 대시보드</a>
+    </li>
+
+    <li class="menu-item" data-submenu="product"
+        th:classappend="${#strings.startsWith(menuActive, 'product')} ? 'active' : ''">
+      📦 상품관리 ▼
+    </li>
+    <ul class="submenu" id="product-submenu"
+        th:classappend="${#strings.startsWith(menuActive, 'product')} ? 'show' : ''">
+      <li class="submenu-item"
+          th:classappend="${menuActive == 'product-list'} ? 'active' : ''">
+        <a th:href="@{/product/list}">상품 목록</a>
+      </li>
+      <li class="submenu-item"
+          th:classappend="${menuActive == 'product-add'} ? 'active' : ''">
+        <a th:href="@{/product/add}">상품 등록</a>
+      </li>
+    </ul>
+
+    <li class="menu-item" data-submenu="inbound"
+        th:classappend="${#strings.startsWith(menuActive, 'inbound')} ? 'active' : ''">
+      📥 입고관리 ▼
+    </li>
+    <ul class="submenu" id="inbound-submenu"
+        th:classappend="${#strings.startsWith(menuActive, 'inbound')} ? 'show' : ''">
+      <li class="submenu-item"
+          th:classappend="${menuActive == 'inbound-add'} ? 'active' : ''">
+        <a th:href="@{/inbound/add}">입고 등록</a>
+      </li>
+      <li class="submenu-item"
+          th:classappend="${menuActive == 'inbound-list'} ? 'active' : ''">
+        <a th:href="@{/inbound/list}">입고 내역</a>
+      </li>
+    </ul>
+
+    <li class="menu-item" data-submenu="outbound"
+        th:classappend="${#strings.startsWith(menuActive, 'outbound')} ? 'active' : ''">
+      📤 출고관리 ▼
+    </li>
+    <ul class="submenu" id="outbound-submenu"
+        th:classappend="${#strings.startsWith(menuActive, 'outbound')} ? 'show' : ''">
+      <li class="submenu-item"
+          th:classappend="${menuActive == 'outbound-add'} ? 'active' : ''">
+        <a th:href="@{/outbound/add}">출고 등록</a>
+      </li>
+      <li class="submenu-item"
+          th:classappend="${menuActive == 'outbound-list'} ? 'active' : ''">
+        <a th:href="@{/outbound/list}">출고 내역</a>
+      </li>
+    </ul>
+
+    <li class="menu-item"
+        th:classappend="${menuActive == 'inventory'} ? 'active' : ''">
+      <a th:href="@{/inventory}">📊 재고현황</a>
+    </li>
+
+    <li class="menu-item"
+        th:classappend="${menuActive == 'statistics'} ? 'active' : ''">
+      <a th:href="@{/statistics}">📈 통계</a>
+    </li>
+
+    <li class="menu-item"
+        th:classappend="${#strings.startsWith(menuActive, 'admin')} ? 'active' : ''">
+      <a th:href="@{/admin}">⚙️ 관리자</a>
+    </li>
+
+    <li class="menu-item" th:classappend="${menuActive == 'notice'} ? 'active' : ''">
+      <a th:href="@{/notice/list}">📢 공지사항</a>
+    </li>
+  </ul>
+</div>

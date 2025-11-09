@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="layout/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <div th:replace="layout/header :: header"></div>
+        <div class="content">
+            <!-- 공지사항 상세보기 화면 -->
+            <div id="notice-detail" class="screen">
+                <div class="form-container" style="max-width: 800px;">
+                    <div style="border-bottom: 2px solid #ecf0f1; padding-bottom: 20px; margin-bottom: 20px;">
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                            <span style="background: #e74c3c; color: white; padding: 4px 12px; border-radius: 3px; font-size: 13px;">긴급</span>
+                            <h2 style="margin: 0; flex: 1;">📌 시스템 정기 점검 안내 (10/31)</h2>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; color: #7f8c8d; font-size: 14px;">
+                            <div>
+                                <span>작성자: 관리자</span>
+                                <span style="margin: 0 10px;">|</span>
+                                <span>작성일: 2024-10-28 09:00</span>
+                            </div>
+                            <div>조회수: 125</div>
+                        </div>
+                    </div>
+
+                    <div style="min-height: 300px; line-height: 1.8; padding: 20px 0;">
+                        <p style="margin-bottom: 15px;">안녕하세요. 재고관리 시스템 관리자입니다.</p>
+
+                        <p style="margin-bottom: 15px;">시스템 안정성 향상 및 신규 기능 추가를 위해 아래와 같이 정기 점검을 실시합니다.</p>
+
+                        <p style="margin-bottom: 15px; font-weight: bold;">■ 점검 일시</p>
+                        <p style="margin-bottom: 15px; padding-left: 20px;">- 2024년 10월 31일 (목) 02:00 ~ 06:00 (약 4시간)</p>
+
+                        <p style="margin-bottom: 15px; font-weight: bold;">■ 점검 내용</p>
+                        <p style="margin-bottom: 5px; padding-left: 20px;">- 시스템 서버 업그레이드</p>
+                        <p style="margin-bottom: 5px; padding-left: 20px;">- 데이터베이스 최적화</p>
+                        <p style="margin-bottom: 15px; padding-left: 20px;">- 보안 패치 적용</p>
+
+                        <p style="margin-bottom: 15px; font-weight: bold;">■ 영향 범위</p>
+                        <p style="margin-bottom: 15px; padding-left: 20px;">- 점검 시간 동안 시스템 전체 서비스 이용 불가</p>
+
+                        <p style="margin-bottom: 15px; background: #fff3cd; padding: 15px; border-radius: 5px; border-left: 4px solid #f39c12;">
+                            ⚠️ 점검 시간 전까지 진행 중인 작업을 모두 저장해 주시기 바랍니다.<br>
+                            점검 시간은 작업 진행 상황에 따라 다소 변경될 수 있습니다.
+                        </p>
+
+                        <p style="margin-bottom: 15px;">이용에 불편을 드려 죄송하며, 더 나은 서비스로 보답하겠습니다.</p>
+
+                        <p style="margin-bottom: 15px;">감사합니다.</p>
+                    </div>
+
+                    <!-- 첨부파일 영역 -->
+                    <div class="attached-files">
+                        <h4 style="margin-bottom: 10px; color: #2c3e50;">📎 첨부파일 (2)</h4>
+                        <div class="attached-file">
+                            <span>📄</span>
+                            <span style="flex: 1;">시스템_점검_상세일정.pdf</span>
+                            <span style="color: #7f8c8d; font-size: 13px;">256 KB</span>
+                            <button class="btn btn-primary" style="padding: 5px 15px; margin-left: 10px;">다운로드</button>
+                        </div>
+                        <div class="attached-file">
+                            <span>📄</span>
+                            <span style="flex: 1;">공지사항_이미지.jpg</span>
+                            <span style="color: #7f8c8d; font-size: 13px;">1.2 MB</span>
+                            <button class="btn btn-primary" style="padding: 5px 15px; margin-left: 10px;">다운로드</button>
+                        </div>
+                    </div>
+
+                    <!-- 댓글 영역 -->
+                    <div class="comment-section">
+                        <h4 style="margin-bottom: 20px; color: #2c3e50;">💬 댓글 (3)</h4>
+
+                        <!-- 댓글 작성 -->
+                        <div class="comment-write">
+                            <textarea placeholder="댓글을 입력하세요"></textarea>
+                            <div class="comment-write-actions">
+                                <button class="btn btn-primary">댓글 등록</button>
+                            </div>
+                        </div>
+
+                        <!-- 댓글 목록 -->
+                        <div class="comment-list">
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <div>
+                                        <span class="comment-author">김철수</span>
+                                        <span class="comment-date" style="margin-left: 10px;">2024-10-28 10:30</span>
+                                    </div>
+                                    <div class="comment-actions">
+                                        <button>수정</button>
+                                        <button>삭제</button>
+                                    </div>
+                                </div>
+                                <div class="comment-content">
+                                    점검 시간이 좀 길게 예정되어 있네요. 혹시 더 빨리 끝날 가능성도 있나요?
+                                </div>
+                            </div>
+
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <div>
+                                        <span class="comment-author">관리자</span>
+                                        <span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 5px;">작성자</span>
+                                        <span class="comment-date" style="margin-left: 10px;">2024-10-28 11:15</span>
+                                    </div>
+                                    <div class="comment-actions">
+                                        <button>수정</button>
+                                        <button>삭제</button>
+                                    </div>
+                                </div>
+                                <div class="comment-content">
+                                    작업 상황에 따라 조기 종료 가능성도 있습니다. 진행 상황은 실시간으로 공유드리겠습니다.
+                                </div>
+                            </div>
+
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <div>
+                                        <span class="comment-author">이영희</span>
+                                        <span class="comment-date" style="margin-left: 10px;">2024-10-28 14:22</span>
+                                    </div>
+                                    <div class="comment-actions">
+                                        <button>수정</button>
+                                        <button>삭제</button>
+                                    </div>
+                                </div>
+                                <div class="comment-content">
+                                    안내 감사합니다. 미리 작업 마무리하도록 하겠습니다!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary" th:onclick="|location.href='@{/notice/edit}'|">수정</button>
+                        <button class="btn btn-danger" onclick="confirmDelete('공지사항')">삭제</button>
+                        <button class="btn" style="background: #95a5a6; color: white;" onclick="showScreen('notice-list')">목록</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>대시보드</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="layout/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <div th:replace="layout/header :: header"></div>
+        <div class="content">
+            <div id="dashboard" class="screen active">
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <h3>총 재고 수량</h3>
+                        <div class="value">1,250개</div>
+                    </div>
+                    <div class="card success">
+                        <h3>오늘 입고</h3>
+                        <div class="value">15건</div>
+                    </div>
+                    <div class="card info">
+                        <h3>오늘 출고</h3>
+                        <div class="value">8건</div>
+                    </div>
+                    <div class="card warning">
+                        <h3>재고 부족 상품</h3>
+                        <div class="value">3개 ⚠️</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 15px;">최근 입출고 내역</h3>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>일시</th>
+                        <th>구분</th>
+                        <th>상품명</th>
+                        <th>수량</th>
+                        <th>담당자</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>2024-10-28 14:30</td>
+                        <td><span style="color: #3498db;">입고</span></td>
+                        <td>A제품</td>
+                        <td>100개</td>
+                        <td>홍길동</td>
+                    </tr>
+                    <tr>
+                        <td>2024-10-28 13:20</td>
+                        <td><span style="color: #e74c3c;">출고</span></td>
+                        <td>B제품</td>
+                        <td>50개</td>
+                        <td>김철수</td>
+                    </tr>
+                    <tr>
+                        <td>2024-10-28 11:00</td>
+                        <td><span style="color: #3498db;">입고</span></td>
+                        <td>C제품</td>
+                        <td>200개</td>
+                        <td>이영희</td>
+                    </tr>
+                    <tr>
+                        <td>2024-10-27 16:45</td>
+                        <td><span style="color: #e74c3c;">출고</span></td>
+                        <td>D제품</td>
+                        <td>30개</td>
+                        <td>박민수</td>
+                    </tr>
+                    <tr>
+                        <td>2024-10-27 15:30</td>
+                        <td><span style="color: #3498db;">입고</span></td>
+                        <td>E제품</td>
+                        <td>150개</td>
+                        <td>홍길동</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

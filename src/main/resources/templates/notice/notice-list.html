@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="layout/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <div th:replace="layout/header :: header"></div>
+        <div class="content">
+            <div id="notice-list">
+                <div class="table-header">
+                    <button class="btn btn-primary" th:onclick="|location.href='@{/notice/add}'|">+ 공지사항 작성</button>
+                    <div class="search-box">
+                        <input type="text" placeholder="제목 또는 내용 검색">
+                        <button class="btn btn-primary">검색</button>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th style="width: 80px;">No</th>
+                        <th style="width: 100px;">구분</th>
+                        <th>제목</th>
+                        <th style="width: 120px;">작성자</th>
+                        <th style="width: 150px;">작성일</th>
+                        <th style="width: 80px;">조회수</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr style="background: #fff9e6;">
+                        <td><span style="background: #e74c3c; color: white; padding: 2px 8px; border-radius: 3px; font-size: 12px;">공지</span></td>
+                        <td><span style="color: #e74c3c; font-weight: bold;">긴급</span></td>
+                        <td style="text-align: left; cursor: pointer;" th:onclick="|location.href='@{/notice/detail}'|">
+                            <strong>📌 시스템 정기 점검 안내 (10/31)</strong>
+                        </td>
+                        <td>관리자</td>
+                        <td>2024-10-28 09:00</td>
+                        <td>125</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td><span style="color: #3498db;">일반</span></td>
+                        <td style="text-align: left; cursor: pointer;" onclick="showScreen('notice-detail')">
+                            재고관리 시스템 사용 매뉴얼 업데이트
+                        </td>
+                        <td>홍길동</td>
+                        <td>2024-10-27 14:20</td>
+                        <td>89</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td><span style="color: #f39c12;">안내</span></td>
+                        <td style="text-align: left; cursor: pointer;">
+                            11월 재고실사 일정 안내
+                        </td>
+                        <td>김철수</td>
+                        <td>2024-10-25 10:15</td>
+                        <td>156</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><span style="color: #3498db;">일반</span></td>
+                        <td style="text-align: left; cursor: pointer;">
+                            신규 공급업체 등록 완료
+                        </td>
+                        <td>이영희</td>
+                        <td>2024-10-22 16:30</td>
+                        <td>67</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><span style="color: #f39c12;">안내</span></td>
+                        <td style="text-align: left; cursor: pointer;">
+                            안전재고 기준 변경 안내
+                        </td>
+                        <td>관리자</td>
+                        <td>2024-10-20 11:00</td>
+                        <td>203</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td><span style="color: #3498db;">일반</span></td>
+                        <td style="text-align: left; cursor: pointer;">
+                            재고관리 시스템 오픈 안내
+                        </td>
+                        <td>관리자</td>
+                        <td>2024-10-01 09:00</td>
+                        <td>345</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!-- 페이징 -->
+                <div class="pagination">
+                    <button>Previous</button>
+                    <button class="active">1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <button>4</button>
+                    <button>5</button>
+                    <button>Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

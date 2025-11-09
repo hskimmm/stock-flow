@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 목록</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="layout/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <div th:replace="layout/header :: header"></div>
+        <div class="content">
+            <!-- 상품 상세보기 화면 -->
+            <div id="product-detail">
+                <div class="form-container">
+                    <h3 style="margin-bottom: 20px; text-align: center;">상품 상세 정보</h3>
+
+                    <div class="form-group">
+                        <label>상품코드</label>
+                        <div class="info-text">PRD-001</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>상품명</label>
+                        <div class="info-text">A제품</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>카테고리</label>
+                        <div class="info-text">전자</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>단위</label>
+                        <div class="info-text">개</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>안전재고</label>
+                        <div class="info-text">50개</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>현재재고</label>
+                        <div class="info-text" style="background: #d4edda; color: #155724; font-weight: bold;">150개</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>등록일</label>
+                        <div class="info-text">2024-10-01 10:30:00</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>비고</label>
+                        <div class="info-text">테스트 상품입니다</div>
+                    </div>
+
+                    <h4 style="margin: 30px 0 15px;">최근 입출고 내역</h4>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>일시</th>
+                            <th>구분</th>
+                            <th>수량</th>
+                            <th>담당자</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>2024-10-28 14:30</td>
+                            <td><span style="color: #3498db;">입고</span></td>
+                            <td>+100개</td>
+                            <td>홍길동</td>
+                        </tr>
+                        <tr>
+                            <td>2024-10-27 10:15</td>
+                            <td><span style="color: #e74c3c;">출고</span></td>
+                            <td>-50개</td>
+                            <td>김철수</td>
+                        </tr>
+                        <tr>
+                            <td>2024-10-26 15:20</td>
+                            <td><span style="color: #3498db;">입고</span></td>
+                            <td>+200개</td>
+                            <td>이영희</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary" data-screen="inventory">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

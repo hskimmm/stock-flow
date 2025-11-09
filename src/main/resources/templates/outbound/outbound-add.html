@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>출고 등록</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="layout/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <div th:replace="layout/header :: header"></div>
+        <div class="content">
+            <!-- 출고 등록 화면 -->
+            <div id="outbound-add">
+                <div class="form-container">
+                    <div class="form-group">
+                        <label class="required">출고일자</label>
+                        <input type="date" value="2024-10-28">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">상품선택</label>
+                        <select id="product-select">
+                            <option value="">선택하세요</option>
+                            <option value="150">A제품 (현재고: 150개)</option>
+                            <option value="30">B제품 (현재고: 30개)</option>
+                            <option value="0">C제품 (현재고: 0개)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="info-text" id="current-stock">상품을 먼저 선택하세요</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">출고수량</label>
+                        <input type="number" placeholder="0" id="outbound-qty">
+                        <div class="hint" style="color: #e74c3c;">※ 출고수량이 현재고량보다 많으면 출고할 수 없습니다</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">출고사유</label>
+                        <select>
+                            <option>선택하세요</option>
+                            <option>판매</option>
+                            <option>폐기</option>
+                            <option>반품</option>
+                            <option>기타</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>비고</label>
+                        <textarea placeholder="추가 정보를 입력하세요"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary">출고 등록</button>
+                        <button class="btn" style="background: #95a5a6; color: white;" data-screen="outbound-list">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

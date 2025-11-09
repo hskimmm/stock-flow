@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 목록</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="layout/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <div th:replace="layout/header :: header"></div>
+        <div class="content">
+            <!-- 상품 수정 화면 -->
+            <div id="product-edit">
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>상품코드</label>
+                        <input type="text" value="PRD-001" disabled>
+                        <div class="hint">수정할 수 없습니다</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">상품명</label>
+                        <input type="text" value="A제품">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">카테고리</label>
+                        <select>
+                            <option selected>전자</option>
+                            <option>의류</option>
+                            <option>식품</option>
+                            <option>기타</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>단위</label>
+                        <select>
+                            <option selected>개</option>
+                            <option>박스</option>
+                            <option>kg</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">안전재고</label>
+                        <input type="number" value="50">
+                        <div class="hint">이 수량 이하일 때 알림이 표시됩니다</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>현재재고</label>
+                        <input type="number" value="150" disabled>
+                        <div class="hint">입출고로만 변경 가능합니다</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>비고</label>
+                        <textarea>테스트 상품입니다</textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary">수정</button>
+                        <button class="btn" style="background: #95a5a6; color: white;">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
