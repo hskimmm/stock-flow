@@ -14,9 +14,12 @@
         <div class="content">
             <!-- 관리자 화면 -->
             <div id="admin">
-                <h3 style="margin-bottom: 20px;">사용자 관리</h3>
                 <div class="table-header">
                     <button class="btn btn-primary" th:onclick="|location.href='@{/admin/add}'|">+ 사용자 추가</button>
+                    <div class="search-box">
+                        <input type="text" placeholder="사용자 검색">
+                        <button class="btn btn-primary">검색</button>
+                    </div>
                 </div>
 
                 <table>
@@ -31,36 +34,14 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>admin</td>
-                        <td>홍길동</td>
-                        <td><span style="color: #e74c3c; font-weight: bold;">관리자</span></td>
-                        <td>2024-01-01</td>
+                    <tr th:each="user:${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.userId}"></td>
+                        <td th:text="${user.userName}"></td>
+                        <td><span style="color: #e74c3c; font-weight: bold;" th:text="${user.role}"></span></td>
+                        <td th:text="${#temporals.format(user.regDate, 'yyyy-MM-dd')}"></td>
                         <td>
-                            <button class="btn btn-success" style="padding: 5px 10px; margin-right: 5px;" th:onclick="|location.href='@{/admin/edit}'|">수정</button>
-                            <button class="btn btn-danger btn-delete" style="padding: 5px 10px;" data-type="사용자">삭제</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>user01</td>
-                        <td>김철수</td>
-                        <td>일반</td>
-                        <td>2024-05-15</td>
-                        <td>
-                            <button class="btn btn-success" style="padding: 5px 10px; margin-right: 5px;" data-screen="admin-user-edit">수정</button>
-                            <button class="btn btn-danger btn-delete" style="padding: 5px 10px;" data-type="사용자">삭제</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>user02</td>
-                        <td>이영희</td>
-                        <td>일반</td>
-                        <td>2024-08-20</td>
-                        <td>
-                            <button class="btn btn-success" style="padding: 5px 10px; margin-right: 5px;" data-screen="admin-user-edit">수정</button>
+                            <button class="btn btn-success" style="padding: 5px 10px; margin-right: 5px;" th:onclick="|location.href='@{/admin/edit/{id}(id=${user.id})}'|">수정</button>
                             <button class="btn btn-danger btn-delete" style="padding: 5px 10px;" data-type="사용자">삭제</button>
                         </td>
                     </tr>
@@ -70,7 +51,16 @@
         </div>
     </div>
 </div>
+<script th:inline="javascript">
 
+    function addButtonEvent() {
+
+    }
+
+    $(function () {
+       addButtonEvent();
+    });
+</script>
 <script th:src="@{/js/app.js}"></script>
 </body>
 </html>

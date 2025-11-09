@@ -3,7 +3,7 @@
 $(document).ready(function() {
     // 서브메뉴 토글
     $('.menu-item[data-submenu]').on('click', function() {
-        var submenuId = $(this).data('submenu') + '-submenu';
+        let submenuId = $(this).data('submenu') + '-submenu';
         $('#' + submenuId).toggleClass('show');
     });
 
@@ -14,8 +14,8 @@ $(document).ready(function() {
 
     // 출고 시 현재고 표시
     $('#product-select').on('change', function() {
-        var stock = $(this).val();
-        var $stockDiv = $('#current-stock');
+        let stock = $(this).val();
+        let $stockDiv = $('#current-stock');
 
         if (stock) {
             $stockDiv.text('현재고량: ' + stock + '개');
@@ -32,7 +32,7 @@ $(document).ready(function() {
 
     // 삭제 버튼 이벤트
     $(document).on('click', '.btn-delete', function() {
-        var type = $(this).data('type');
+        let type = $(this).data('type');
         if (confirm('정말 이 ' + type + '을(를) 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
             alert(type + '이(가) 삭제되었습니다.');
             // 실제로는 여기서 서버에 삭제 요청

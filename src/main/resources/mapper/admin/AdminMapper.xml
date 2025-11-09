@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.stockflow.mapper.admin.AdminMapper">
+    <select id="getUsers" resultType="user">
+        SELECT id, user_id, user_name, role, reg_date, mod_date
+        FROM user
+        WHERE del_yn = 'N'
+        ORDER BY id DESC
+    </select>
+</mapper>
