@@ -3,28 +3,9 @@ package com.spring.stockflow.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class PageController {
-
-    @GetMapping("/")
-    public String index() {
-        return "index";
-    }
-
-    @PostMapping("/login")
-    public String login(Model model) {
-        model.addAttribute("menuActive", "dashboard");
-        return "dashboard/dashboard";
-    }
-
-    @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        model.addAttribute("menuActive", "dashboard");
-        return "dashboard/dashboard";
-    }
-
     @GetMapping("/product/list")
     public String productList(Model model) {
         model.addAttribute("menuActive", "product-list");

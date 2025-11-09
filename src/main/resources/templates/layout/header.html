@@ -1,4 +1,4 @@
-<div class="header" th:fragment="header">
+<div class="header" th:fragment="header" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <h1 id="page-title">대시보드</h1>
-    <div class="user-info">👤 관리자 (홍길동) | 로그아웃</div>
+    <div class="user-info">👤 관리자 (<span sec:authentication="principal.userName"></span>) | <a href="/logout">로그아웃</a></div>
 </div>

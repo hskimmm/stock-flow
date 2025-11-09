@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.stockflow.mapper.user.UserMapper">
+    <select id="loadUserByUsername" resultType="User">
+        SELECT
+            id, user_id as userId, password, user_name as userName, role, reg_date as regDate, mod_date as modDate, del_yn as delYn
+        FROM user
+        WHERE user_id = #{username}
+    </select>
+</mapper>

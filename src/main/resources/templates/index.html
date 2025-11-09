@@ -15,8 +15,8 @@
         <p>Inventory Management System</p>
     </div>
 
-    <div class="error-message" id="error-message" th:if="${error}">
-        <span th:text="${error}">아이디 또는 비밀번호가 일치하지 않습니다.</span>
+    <div class="error-message" id="error-message" th:if="${param.error}">
+        <span th:text="${exception}?:'아이디 또는 비밀번호가 일치하지 않습니다.'"></span>
     </div>
 
     <form th:action="@{/login}" method="post" id="login-form">
