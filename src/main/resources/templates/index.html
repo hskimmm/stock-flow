@@ -51,8 +51,8 @@
     $(document).ready(function() {
         // 엔터키로 로그인
         $('#login-form').on('submit', function(e) {
-            var userId = $('#userId').val().trim();
-            var password = $('#password').val().trim();
+            let userId = $('#userId').val().trim();
+            let password = $('#password').val().trim();
 
             if (!userId) {
                 alert('아이디를 입력하세요.');

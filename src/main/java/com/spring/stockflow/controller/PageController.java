@@ -78,24 +78,6 @@ public class PageController {
         return "statistics/statistics";
     }
 
-    @GetMapping("/admin")
-    public String admin(Model model) {
-        model.addAttribute("menuActive", "admin");
-        return "admin/admin";
-    }
-
-    @GetMapping("/admin/add")
-    public String adminAdd(Model model) {
-        model.addAttribute("menuActive", "admin-user-add");
-        return "admin/admin-user-add";
-    }
-
-    @GetMapping("/admin/edit")
-    public String adminEdit(Model model) {
-        model.addAttribute("menuActive", "admin-user-edit");
-        return "admin/admin-user-edit";
-    }
-
     @GetMapping("/notice/list")
     public String noticeList(Model model) {
         model.addAttribute("menuActive", "notice");

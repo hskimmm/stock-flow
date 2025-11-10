@@ -16,7 +16,7 @@ public class User {
     private String userId; // 사용자 ID
     private String password; //비밀번호
     private String userName; //사용자 이름
-    private String Role; //권한
+    private String role; //권한
     private LocalDateTime regDate; //등록일
     private LocalDateTime modDate; //수정일
     private String delYn; //삭제여부
