@@ -8,4 +8,8 @@ import java.util.List;
 @Mapper
 public interface AdminMapper {
     List<User> getUsers();
+
+    boolean usersExists(String userId);
+
+    void createUser(User user);
 }

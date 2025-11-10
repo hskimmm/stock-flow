@@ -9,4 +9,29 @@
         WHERE del_yn = 'N'
         ORDER BY id DESC
     </select>
+
+    <select id="usersExists" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1
+            FROM user
+            WHERE user_id = #{userId}
+        )
+    </select>
+
+    <insert id="createUser">
+        INSERT INTO user
+        (
+            user_id,
+            password,
+            user_name,
+            role
+        )
+        VALUES
+        (
+            #{userId},
+            #{password},
+            #{userName},
+            #{role}
+        )
+    </insert>
 </mapper>

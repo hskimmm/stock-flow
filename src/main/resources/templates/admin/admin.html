@@ -42,7 +42,7 @@
                         <td th:text="${#temporals.format(user.regDate, 'yyyy-MM-dd')}"></td>
                         <td>
                             <button class="btn btn-success" style="padding: 5px 10px; margin-right: 5px;" th:onclick="|location.href='@{/admin/edit/{id}(id=${user.id})}'|">수정</button>
-                            <button class="btn btn-danger btn-delete" style="padding: 5px 10px;" data-type="사용자">삭제</button>
+                            <button class="btn btn-danger btn-delete" style="padding: 5px 10px;" data-type="사용자" th:attr="data-id=${user.id}">삭제</button>
                         </td>
                     </tr>
                     </tbody>
@@ -52,11 +52,24 @@
     </div>
 </div>
 <script th:inline="javascript">
-
+    //버튼 이벤트 처리
     function addButtonEvent() {
+        $(".btn-delete").on("click", function (e) {
+           e.preventDefault();
+           let type = $(this).data('type');
+           let id = $(this).data('id');
 
+           if (confirm('정말 이 ' + type + '을(를) 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
+               deleteUser(id);
+           }
+        });
     }
 
+    //사용자 삭제
+    function deleteUser(id) {
+    }
+
+    //init
     $(function () {
        addButtonEvent();
     });
