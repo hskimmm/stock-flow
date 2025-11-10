@@ -7,6 +7,7 @@ import com.spring.stockflow.exception.UserNotFoundException;
 import com.spring.stockflow.mapper.admin.AdminMapper;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.util.ModelMapperUtils;
+import com.spring.stockflow.util.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -26,9 +27,9 @@ public class AdminServiceImpl implements AdminService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<User> getUsers() {
+    public List<User> getUsers(Pagination pagination) {
         try {
-            return adminMapper.getUsers();
+            return adminMapper.getUsers(pagination);
         } catch (DataAccessException e) {
             log.error("사용자 목록 조회(데이터베이스 오류) = {}", e.getMessage());
             throw new RuntimeException("사용자 목록 조회 중 오류가 발생하였습니다");
@@ -128,5 +129,11 @@ public class AdminServiceImpl implements AdminService{
             log.error("사용자 삭제(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("사용자 삭제 중 오류가 발생하였습니다");
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getTotalCount() {
+        return adminMapper.getTotalCount();
     }
 }

@@ -8,6 +8,7 @@
         FROM user
         WHERE del_yn = 'N'
         ORDER BY id DESC
+        LIMIT #{skip}, #{amount}
     </select>
 
     <select id="usersExists" resultType="boolean">
@@ -56,4 +57,8 @@
             del_yn = 'Y'
         WHERE id = #{id}
     </update>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(id) FROM USER WHERE del_yn = 'N'
+    </select>
 </mapper>

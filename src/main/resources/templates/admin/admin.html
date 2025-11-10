@@ -17,7 +17,7 @@
             <!-- 관리자 화면 -->
             <div id="admin">
                 <div class="table-header">
-                    <button class="btn btn-primary" th:onclick="|location.href='@{/admin/add}'|">+ 사용자 추가</button>
+                    <button class="btn btn-primary" th:onclick="|location.href='@{/admin/add(pageNum=${page.pagination.pageNum})}'|">+ 사용자 추가</button>
                     <div class="search-box">
                         <input type="text" placeholder="사용자 검색">
                         <button class="btn btn-primary">검색</button>
@@ -43,20 +43,39 @@
                         <td><span style="color: #e74c3c; font-weight: bold;" th:text="${user.role}"></span></td>
                         <td th:text="${#temporals.format(user.regDate, 'yyyy-MM-dd')}"></td>
                         <td>
-                            <button class="btn btn-success" style="padding: 5px 10px; margin-right: 5px;" th:onclick="|location.href='@{/admin/edit/{id}(id=${user.id})}'|">수정</button>
+                            <button class="btn btn-success" style="padding: 5px 10px; margin-right: 5px;" th:onclick="|location.href='@{/admin/edit/{id}(id=${user.id}, pageNum=${page.pagination.pageNum})}'|">수정</button>
                             <button class="btn btn-danger btn-delete" style="padding: 5px 10px;" data-type="사용자" th:attr="data-id=${user.id}">삭제</button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+                <!-- 페이징 -->
+                <div class="pagination">
+                    <div class="page-item" th:if="${page.prev}">
+                        <a th:href="${page.startPage - 1}">Previous</a>
+                    </div>
+                    <div class="page-item" th:each="num : ${#numbers.sequence(page.startPage, page.endPage)}">
+                        <a th:class="${num == page.pagination.pageNum ? 'active' : ''}" th:href="${num}">[[${num}]]</a>
+                    </div>
+                    <div class="page-item" th:if="${page.next}">
+                        <a th:href="${page.endPage + 1}">Next</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<form id="pageForm">
+    <input type="hidden" name="pageNum" th:value="${page.pagination.pageNum}"/>
+</form>
 <script th:inline="javascript">
 
     const csrfToken = $("meta[name='_csrf']").attr('content');
     const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
+    const pageUL = $(".pagination");
+    const pageForm = $("#pageForm");
 
     //버튼 이벤트 처리
     function addButtonEvent() {
@@ -68,6 +87,14 @@
            if (confirm('정말 이 ' + type + '을(를) 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
                deleteUser(id);
            }
+        });
+
+        pageUL.on("click", "a", function (e) {
+           e.preventDefault();
+           let pageNum = $(this).attr('href');
+           $("input[name='pageNum']").val(pageNum);
+           pageForm.attr('action', '/admin');
+           pageForm.submit();
         });
     }
 
@@ -82,7 +109,8 @@
            success: function (response) {
                if (response.success) {
                    alert(response.message);
-                   window.location.href = '/admin';
+                   pageForm.attr('action', '/admin');
+                   pageForm.submit();
                }
            },
            error: function (xhr, status, error) {

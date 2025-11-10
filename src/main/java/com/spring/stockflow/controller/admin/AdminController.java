@@ -3,8 +3,10 @@ package com.spring.stockflow.controller.admin;
 import com.spring.stockflow.domain.User;
 import com.spring.stockflow.dto.CreateUserDTO;
 import com.spring.stockflow.dto.EditUserDTO;
+import com.spring.stockflow.dto.PageDTO;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.service.admin.AdminService;
+import com.spring.stockflow.util.Pagination;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,16 +27,19 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping
-    public String getUsers(Model model) {
-        List<User> users = adminService.getUsers();
+    public String getUsers(@ModelAttribute(value = "pagination") Pagination pagination, Model model) {
+        List<User> users = adminService.getUsers(pagination);
+
+        PageDTO pageDTO = new PageDTO(pagination, adminService.getTotalCount());
 
         model.addAttribute("users", users);
+        model.addAttribute("page", pageDTO);
         model.addAttribute("menuActive", "admin");
         return "admin/admin";
     }
 
     @GetMapping("/add")
-    public String addUserForm(Model model) {
+    public String addUserForm(@ModelAttribute(value = "pagination") Pagination pagination, Model model) {
         model.addAttribute("menuActive", "admin-user-add");
         return "admin/admin-user-add";
     }
@@ -52,7 +57,7 @@ public class AdminController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editUserForm(@PathVariable(value = "id") Long id, Model model) {
+    public String editUserForm(@PathVariable(value = "id") Long id, @ModelAttribute(value = "pagination") Pagination pagination, Model model) {
         User user = adminService.getUser(id);
 
         model.addAttribute("user", user);
