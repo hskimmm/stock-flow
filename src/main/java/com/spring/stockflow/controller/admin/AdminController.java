@@ -29,8 +29,7 @@ public class AdminController {
     @GetMapping
     public String getUsers(@ModelAttribute(value = "pagination") Pagination pagination, Model model) {
         List<User> users = adminService.getUsers(pagination);
-
-        PageDTO pageDTO = new PageDTO(pagination, adminService.getTotalCount());
+        PageDTO pageDTO = new PageDTO(pagination, adminService.getTotalCount(pagination));
 
         model.addAttribute("users", users);
         model.addAttribute("page", pageDTO);

@@ -133,7 +133,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Transactional(readOnly = true)
     @Override
-    public int getTotalCount() {
-        return adminMapper.getTotalCount();
+    public int getTotalCount(Pagination pagination) {
+        return adminMapper.getTotalCount(pagination);
     }
 }

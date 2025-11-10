@@ -22,5 +22,5 @@ public interface AdminService {
 
     ApiResponse<?> deleteUser(Long id);
 
-    int getTotalCount();
+    int getTotalCount(Pagination pagination);
 }

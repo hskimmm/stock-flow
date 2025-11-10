@@ -20,5 +20,5 @@ public interface AdminMapper {
 
     void deleteUser(Long id);
 
-    int getTotalCount();
+    int getTotalCount(Pagination pagination);
 }

@@ -17,10 +17,10 @@
             <!-- 관리자 화면 -->
             <div id="admin">
                 <div class="table-header">
-                    <button class="btn btn-primary" th:onclick="|location.href='@{/admin/add(pageNum=${page.pagination.pageNum})}'|">+ 사용자 추가</button>
+                    <button class="btn btn-primary" th:onclick="|location.href='@{/admin/add(pageNum=${page.pagination.pageNum}, keyword=${pagination.keyword})}'|">+ 사용자 추가</button>
                     <div class="search-box">
-                        <input type="text" placeholder="사용자 검색">
-                        <button class="btn btn-primary">검색</button>
+                        <input type="text" name="keyword" th:value="${pagination.keyword}" placeholder="아이디 또는 사용자 검색">
+                        <button class="btn btn-primary btn-search">검색</button>
                     </div>
                 </div>
 
@@ -43,7 +43,7 @@
                         <td><span style="color: #e74c3c; font-weight: bold;" th:text="${user.role}"></span></td>
                         <td th:text="${#temporals.format(user.regDate, 'yyyy-MM-dd')}"></td>
                         <td>
-                            <button class="btn btn-success" style="padding: 5px 10px; margin-right: 5px;" th:onclick="|location.href='@{/admin/edit/{id}(id=${user.id}, pageNum=${page.pagination.pageNum})}'|">수정</button>
+                            <button class="btn btn-success" style="padding: 5px 10px; margin-right: 5px;" th:onclick="|location.href='@{/admin/edit/{id}(id=${user.id}, pageNum=${page.pagination.pageNum}, keyword=${pagination.keyword})}'|">수정</button>
                             <button class="btn btn-danger btn-delete" style="padding: 5px 10px;" data-type="사용자" th:attr="data-id=${user.id}">삭제</button>
                         </td>
                     </tr>
@@ -68,6 +68,7 @@
 
 <form id="pageForm">
     <input type="hidden" name="pageNum" th:value="${page.pagination.pageNum}"/>
+    <input type="hidden" name="keyword" th:value="${page.pagination.keyword}"/>
 </form>
 <script th:inline="javascript">
 
@@ -93,6 +94,17 @@
            e.preventDefault();
            let pageNum = $(this).attr('href');
            $("input[name='pageNum']").val(pageNum);
+           pageForm.attr('action', '/admin');
+           pageForm.submit();
+        });
+
+        $(".btn-search").on("click", function (e) {
+           e.preventDefault();
+           let keywordValue = $(".search-box input[name='keyword']").val().trim();
+
+           pageForm.find("input[name='pageNum']").val(1);
+           pageForm.find("input[name='keyword']").val(keywordValue);
+
            pageForm.attr('action', '/admin');
            pageForm.submit();
         });

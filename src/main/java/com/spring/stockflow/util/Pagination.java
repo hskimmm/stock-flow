@@ -8,7 +8,7 @@ import lombok.Getter;
 public class Pagination {
 
     private int pageNum = 1;
-    private int amount = 3;
+    private int amount = 10;
 
     private String[] types;
     private String typeStr;

@@ -3,10 +3,21 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.stockflow.mapper.admin.AdminMapper">
+
+    <sql id="search">
+        <if test="keyword != null">
+            AND (
+                user_id LIKE CONCAT('%', #{keyword}, '%')
+                OR user_name LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+    </sql>
+
     <select id="getUsers" resultType="user">
         SELECT id, user_id, user_name, role, reg_date, mod_date
         FROM user
         WHERE del_yn = 'N'
+        <include refid="search"/>
         ORDER BY id DESC
         LIMIT #{skip}, #{amount}
     </select>
@@ -59,6 +70,9 @@
     </update>
 
     <select id="getTotalCount" resultType="int">
-        SELECT COUNT(id) FROM USER WHERE del_yn = 'N'
+        SELECT COUNT(id)
+        FROM USER
+        WHERE del_yn = 'N'
+        <include refid="search"/>
     </select>
 </mapper>
