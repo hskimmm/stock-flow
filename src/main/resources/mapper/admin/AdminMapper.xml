@@ -50,4 +50,10 @@
             </if>
         WHERE id = #{id}
     </update>
+
+    <update id="deleteUser">
+        UPDATE user SET
+            del_yn = 'Y'
+        WHERE id = #{id}
+    </update>
 </mapper>

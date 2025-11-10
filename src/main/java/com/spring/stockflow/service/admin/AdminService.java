@@ -18,4 +18,6 @@ public interface AdminService {
     User getUser(Long id);
 
     ApiResponse<?> editUser(@Valid EditUserDTO editUserDTO);
+
+    ApiResponse<?> deleteUser(Long id);
 }

@@ -54,6 +54,10 @@
     </div>
 </div>
 <script th:inline="javascript">
+
+    const csrfToken = $("meta[name='_csrf']").attr('content');
+    const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
     //버튼 이벤트 처리
     function addButtonEvent() {
         $(".btn-delete").on("click", function (e) {
@@ -69,6 +73,37 @@
 
     //사용자 삭제
     function deleteUser(id) {
+        $.ajax({
+           url: `/admin/${id}`,
+           method: 'DELETE',
+           beforeSend: function (xhr) {
+               xhr.setRequestHeader(csrfHeader, csrfToken)
+           },
+           success: function (response) {
+               if (response.success) {
+                   alert(response.message);
+                   window.location.href = '/admin';
+               }
+           },
+           error: function (xhr, status, error) {
+               let response;
+               try {
+                   response = JSON.parse(xhr.responseText);
+               } catch (e) {
+                   alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                   return e;
+               }
+
+               let errorMessage = response.message;
+               if (xhr.status === 404) {
+                   alert(errorMessage);
+                   return false;
+               } else if (xhr.status === 500) {
+                   alert(errorMessage);
+                   return false;
+               }
+           }
+        });
     }
 
     //init

@@ -3,6 +3,7 @@ package com.spring.stockflow.service.admin;
 import com.spring.stockflow.domain.User;
 import com.spring.stockflow.dto.CreateUserDTO;
 import com.spring.stockflow.dto.EditUserDTO;
+import com.spring.stockflow.exception.UserNotFoundException;
 import com.spring.stockflow.mapper.admin.AdminMapper;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.util.ModelMapperUtils;
@@ -107,6 +108,25 @@ public class AdminServiceImpl implements AdminService{
         } catch (Exception e) {
             log.error("사용자 정보 수정(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("사용자 정보 수정 중 오류가 발생하였습니다");
+        }
+    }
+
+    @Transactional
+    @Override
+    public ApiResponse<?> deleteUser(Long id) {
+        if (id == null) {
+            throw new UserNotFoundException("사용자가 존재하지 않습니다");
+        }
+
+        try {
+            adminMapper.deleteUser(id);
+            return new ApiResponse<>(true, "사용자를 삭제하였습니다");
+        } catch (DataAccessException e) {
+            log.error("사용자 삭제(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("사용자 삭제 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("사용자 삭제(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("사용자 삭제 중 오류가 발생하였습니다");
         }
     }
 }

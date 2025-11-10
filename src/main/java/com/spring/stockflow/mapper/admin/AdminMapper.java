@@ -16,4 +16,6 @@ public interface AdminMapper {
     User getUser(Long id);
 
     void editUser(User user);
+
+    void deleteUser(Long id);
 }

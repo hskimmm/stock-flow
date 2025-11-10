@@ -65,4 +65,10 @@ public class AdminController {
         ApiResponse<?> response = adminService.editUser(editUserDTO);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteUser(@PathVariable(value = "id") Long id) {
+        ApiResponse<?> response = adminService.deleteUser(id);
+        return ResponseEntity.ok(response);
+    }
 }
