@@ -12,4 +12,8 @@ public interface AdminMapper {
     boolean usersExists(String userId);
 
     void createUser(User user);
+
+    User getUser(Long id);
+
+    void editUser(User user);
 }

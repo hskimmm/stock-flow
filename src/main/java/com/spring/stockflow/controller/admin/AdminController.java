@@ -2,12 +2,14 @@ package com.spring.stockflow.controller.admin;
 
 import com.spring.stockflow.domain.User;
 import com.spring.stockflow.dto.CreateUserDTO;
+import com.spring.stockflow.dto.EditUserDTO;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.service.admin.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +48,21 @@ public class AdminController {
     @PostMapping
     public ResponseEntity<ApiResponse<?>> createUser(@Valid @ModelAttribute CreateUserDTO createUserDTO) {
         ApiResponse<?> response = adminService.createUser(createUserDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editUserForm(@PathVariable(value = "id") Long id, Model model) {
+        User user = adminService.getUser(id);
+
+        model.addAttribute("user", user);
+        model.addAttribute("menuActive", "admin-user-edit");
+        return "admin/admin-user-edit";
+    }
+
+    @PutMapping
+    public ResponseEntity<ApiResponse<?>> editUser(@Valid @ModelAttribute EditUserDTO editUserDTO) {
+        ApiResponse<?> response = adminService.editUser(editUserDTO);
         return ResponseEntity.ok(response);
     }
 }

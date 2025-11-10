@@ -34,4 +34,20 @@
             #{role}
         )
     </insert>
+
+    <select id="getUser" resultType="user">
+        SELECT id, user_id, user_name, role, reg_date, mod_date
+        FROM user
+        WHERE id = #{id}
+    </select>
+
+    <update id="editUser">
+        UPDATE user SET
+            user_name = #{userName},
+            role = #{role},
+            <if test="password != null and password != ''">
+                password = #{password}
+            </if>
+        WHERE id = #{id}
+    </update>
 </mapper>
