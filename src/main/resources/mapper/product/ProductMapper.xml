@@ -38,4 +38,11 @@
             #{remarks}
         )
     </insert>
+
+    <select id="getProduct" resultType="product">
+        SELECT id, product_code, product_name, category, unit, safety_stock, current_stock, remarks, reg_date, mod_date, del_yn
+        FROM product
+        WHERE del_yn = 'N'
+        AND id = #{id}
+    </select>
 </mapper>

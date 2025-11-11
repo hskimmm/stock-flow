@@ -37,7 +37,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:onclick="|location.href='@{/product/{id}(id=${product.id})}'|" th:each="product : ${products}">
+                    <tr th:onclick="|location.href='@{/product/detail/{id}(id=${product.id})}'|" th:each="product : ${products}">
                         <td th:text="${product.id}"></td>
                         <td th:text="${product.productName}"></td>
                         <td th:text="${product.category}"></td>
@@ -47,7 +47,7 @@
                                                     th:class="${ product.currentStock == 0 ? 'status-danger' : (product.currentStock < product.safetyStock ? 'status-warning' : 'status-normal')}"></td>
                         <td>
                             <button class="btn btn-success" style="padding: 5px 10px; margin-right: 5px;">
-                                <a class="btn-a" th:href="@{/product/{id}(id=${product.id})}">수정</a>
+                                <a class="btn-a" th:href="@{/product/edit/{id}(id=${product.id})}">수정</a>
                             </button>
                             <button class="btn btn-danger btn-delete" style="padding: 5px 10px;" data-type="상품">삭제</button>
                         </td>

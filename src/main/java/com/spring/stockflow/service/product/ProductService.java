@@ -11,4 +11,6 @@ public interface ProductService {
     List<Product> getProducts();
 
     ApiResponse<?> addProduct(@Valid CreateProductDTO createProductDTO);
+
+    Product getProduct(Long id);
 }

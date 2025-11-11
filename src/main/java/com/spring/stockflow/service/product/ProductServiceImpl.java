@@ -2,6 +2,7 @@ package com.spring.stockflow.service.product;
 
 import com.spring.stockflow.domain.Product;
 import com.spring.stockflow.dto.product.CreateProductDTO;
+import com.spring.stockflow.exception.ProductNotFoundException;
 import com.spring.stockflow.mapper.product.ProductMapper;
 import com.spring.stockflow.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,24 @@ public class ProductServiceImpl implements ProductService{
         } catch (Exception e) {
             log.error("상품 등록(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("상품 등록중 오류가 발생하였습니다.");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Product getProduct(Long id) {
+        if (id == null) {
+            throw new ProductNotFoundException("상품이 존재하지 않습니다");
+        }
+
+        try {
+            return productMapper.getProduct(id);
+        } catch (DataAccessException e) {
+            log.error("상품 조회(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("상품 조회중 오류가 발생하였습니다.");
+        } catch (Exception e) {
+            log.error("상품 조회(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("상품 조회중 오류가 발생하였습니다.");
         }
     }
 

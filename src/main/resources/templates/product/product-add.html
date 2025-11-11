@@ -123,6 +123,16 @@
                    let errorMessage = response.message;
                    if (xhr.status === 400) {
                        let errors = response.items;
+                       if (errors['productName']) {
+                           alert(errors['productName']);
+                           return false;
+                       } else if (errors['category']) {
+                           alert(errors['category']);
+                           return false;
+                       } else if (errors['safetyStock']) {
+                           alert(errors['safetyStock']);
+                           return false;
+                       }
                    } else if (xhr.status === 500) {
                        alert(errorMessage);
                        return false;

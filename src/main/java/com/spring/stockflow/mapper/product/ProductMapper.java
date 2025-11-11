@@ -12,4 +12,6 @@ public interface ProductMapper {
     String findLastProductCodeByDate(String dateStr);
 
     void addProduct(Product product);
+
+    Product getProduct(Long id);
 }
