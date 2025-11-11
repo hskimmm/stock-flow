@@ -64,4 +64,10 @@ public class ProductController {
         ApiResponse<?> response = productService.editProduct(editProductDTO);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteProduct(@PathVariable(value = "id") Long id) {
+        ApiResponse<?> response = productService.deleteProduct(id);
+        return ResponseEntity.ok(response);
+    }
 }

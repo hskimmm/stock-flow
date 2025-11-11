@@ -55,4 +55,10 @@
             remarks = #{remarks}
         WHERE id = #{id}
     </update>
+
+    <update id="deleteProduct">
+        UPDATE product SET
+            del_yn = 'Y'
+        WHERE id = #{id}
+    </update>
 </mapper>

@@ -16,4 +16,6 @@ public interface ProductService {
     Product getProduct(Long id);
 
     ApiResponse<?> editProduct(@Valid EditProductDTO editProductDTO);
+
+    ApiResponse<?> deleteProduct(Long id);
 }

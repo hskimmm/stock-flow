@@ -49,7 +49,7 @@
                             <button class="btn btn-success" style="padding: 5px 10px; margin-right: 5px;">
                                 <a class="btn-a" th:href="@{/product/edit/{id}(id=${product.id})}">수정</a>
                             </button>
-                            <button class="btn btn-danger btn-delete" style="padding: 5px 10px;" data-type="상품">삭제</button>
+                            <button class="btn btn-danger btn-delete" style="padding: 5px 10px;" data-type="상품" th:attr="data-id=${product.id}">삭제</button>
                         </td>
                     </tr>
                     </tbody>
@@ -60,7 +60,54 @@
 </div>
 <script th:src="@{/js/app.js}"></script>
 <script th:inline="javascript">
+
+    const csrfToken = $("meta[name='_csrf']").attr('content');
+    const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
     function addButtonEvent() {
+        $(".btn-delete").on("click", function (e) {
+           e.preventDefault();
+           let type = $(this).data('type');
+           let id = $(this).data('id');
+           if (confirm('정말 이 ' + type + '을(를) 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
+               deleteProduct(id);
+           }
+        });
+    }
+
+    //상품 삭제
+    function deleteProduct(id) {
+        $.ajax({
+            url: `/product/${id}`,
+            method: 'DELETE',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(csrfHeader, csrfToken)
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+                    window.location.href = '/product';
+                }
+            },
+            error: function (xhr, status, error) {
+                let response;
+                try {
+                    response = JSON.parse(xhr.responseText);
+                } catch (e) {
+                    alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                    return e;
+                }
+
+                let errorMessage = response.message;
+                if (xhr.status === 404) {
+                    alert(errorMessage);
+                    return false;
+                } else if (xhr.status === 500) {
+                    alert(errorMessage);
+                    return false;
+                }
+            }
+        });
     }
 
     $(function () {

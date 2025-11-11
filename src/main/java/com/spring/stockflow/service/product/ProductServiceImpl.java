@@ -103,6 +103,25 @@ public class ProductServiceImpl implements ProductService{
         }
     }
 
+    @Transactional
+    @Override
+    public ApiResponse<?> deleteProduct(Long id) {
+        if (id == null) {
+            throw new ProductNotFoundException("상품이 존재하지 않습니다");
+        }
+
+        try {
+            productMapper.deleteProduct(id);
+            return new ApiResponse<>(true, "상품을 삭제하였습니다");
+        } catch (DataAccessException e) {
+            log.error("상품 삭제(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("상품 삭제 중 오류가 발생하였습니다.");
+        } catch (Exception e) {
+            log.error("상품 삭제(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("상품 삭제 중 오류가 발생하였습니다.");
+        }
+    }
+
     //상품 코드 생성
     private String generateProductCode() {
         String dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
