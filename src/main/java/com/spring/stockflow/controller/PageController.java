@@ -6,30 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class PageController {
-    @GetMapping("/product/list")
-    public String productList(Model model) {
-        model.addAttribute("menuActive", "product-list");
-        return "product/product-list";
-    }
-
-    @GetMapping("/product/add")
-    public String productAdd(Model model) {
-        model.addAttribute("menuActive", "product-add");
-        return "product/product-add";
-    }
-
-    @GetMapping("/product/edit")
-    public String productEdit(Model model) {
-        model.addAttribute("menuActive", "product-list");
-        return "product/product-edit";
-    }
-
-    @GetMapping("/product/detail")
-    public String productDetail(Model model) {
-        model.addAttribute("menuActive", "product-list");
-        return "product/product-detail";
-    }
-
     @GetMapping("/inbound/list")
     public String inboundList(Model model) {
         model.addAttribute("menuActive", "inbound-list");
