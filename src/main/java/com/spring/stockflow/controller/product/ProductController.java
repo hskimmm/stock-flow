@@ -1,10 +1,12 @@
 package com.spring.stockflow.controller.product;
 
 import com.spring.stockflow.domain.Product;
+import com.spring.stockflow.dto.PageDTO;
 import com.spring.stockflow.dto.product.CreateProductDTO;
 import com.spring.stockflow.dto.product.EditProductDTO;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.service.product.ProductService;
+import com.spring.stockflow.util.Pagination;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,15 +26,18 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public String getProducts(Model model) {
-        List<Product> products = productService.getProducts();
+    public String getProducts(@ModelAttribute(value = "pagination") Pagination pagination, Model model) {
+        List<Product> products = productService.getProducts(pagination);
+        PageDTO pageDTO = new PageDTO(pagination, productService.getTotalCount(pagination));
+
+        model.addAttribute("page", pageDTO);
         model.addAttribute("products", products);
         model.addAttribute("menuActive", "product-list");
         return "product/product-list";
     }
 
     @GetMapping("/add")
-    public String addProductForm(Model model) {
+    public String addProductForm(@ModelAttribute(value = "pagination") Pagination pagination, Model model) {
         model.addAttribute("menuActive", "product-add");
         return "product/product-add";
     }
@@ -44,7 +49,7 @@ public class ProductController {
     }
 
     @GetMapping("/detail/{id}")
-    public String detailProduct(@PathVariable(value = "id") Long id, Model model) {
+    public String detailProduct(@PathVariable(value = "id") Long id, @ModelAttribute(value = "pagination") Pagination pagination, Model model) {
         Product product = productService.getProduct(id);
         model.addAttribute("product", product);
         model.addAttribute("menuActive", "product-list");
@@ -52,7 +57,7 @@ public class ProductController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editProductForm(@PathVariable(value = "id") Long id, Model model) {
+    public String editProductForm(@PathVariable(value = "id") Long id, @ModelAttribute(value = "pagination") Pagination pagination, Model model) {
         Product product = productService.getProduct(id);
         model.addAttribute("product", product);
         model.addAttribute("menuActive", "product-list");

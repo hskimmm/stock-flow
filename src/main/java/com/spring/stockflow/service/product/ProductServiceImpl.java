@@ -7,6 +7,7 @@ import com.spring.stockflow.exception.ProductNotFoundException;
 import com.spring.stockflow.mapper.product.ProductMapper;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.util.ModelMapperUtils;
+import com.spring.stockflow.util.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataAccessException;
@@ -26,9 +27,9 @@ public class ProductServiceImpl implements ProductService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<Product> getProducts() {
+    public List<Product> getProducts(Pagination pagination) {
         try {
-            return productMapper.getProducts();
+            return productMapper.getProducts(pagination);
         } catch (DataAccessException e) {
             log.error("상품 목록 조회(데이터베이스 오류) = {}", e.getMessage());
             throw new RuntimeException("상품 목록 조회중 오류가 발생하였습니다.");
@@ -120,6 +121,12 @@ public class ProductServiceImpl implements ProductService{
             log.error("상품 삭제(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("상품 삭제 중 오류가 발생하였습니다.");
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getTotalCount(Pagination pagination) {
+        return productMapper.getTotalCount(pagination);
     }
 
     //상품 코드 생성
