@@ -19,8 +19,8 @@
                 <div class="table-header">
                     <button class="btn btn-primary" data-screen="product-add" th:onclick="|location.href='@{/product/add(pageNum = ${page.pagination.pageNum})}'|">+ 상품 등록</button>
                     <div class="search-box">
-                        <input type="text" placeholder="상품명 검색">
-                        <button class="btn btn-primary">검색</button>
+                        <input type="text" name="keyword" th:value="${pagination.keyword}" placeholder="상품명 및 카테고리 검색">
+                        <button class="btn btn-primary btn-search">검색</button>
                     </div>
                 </div>
 
@@ -73,6 +73,7 @@
 
 <form id="pageForm">
     <input type="hidden" name="pageNum" th:value="${page.pagination.pageNum}"/>
+    <input type="hidden" name="keyword" th:value="${page.pagination.keyword}"/>
 </form>
 
 <script th:src="@{/js/app.js}"></script>
@@ -101,6 +102,18 @@
 
             pageForm.attr('action', '/product');
             pageForm.submit();
+        });
+
+        $(".btn-search").on("click", function (e) {
+           e.preventDefault();
+
+           let keywordValue = $("input[name='keyword']").val().trim();
+
+           pageForm.find("input[name='pageNum']").val(1);
+           pageForm.find("input[name='keyword']").val(keywordValue);
+
+           pageForm.attr('action', '/product');
+           pageForm.submit();
         });
     }
 
