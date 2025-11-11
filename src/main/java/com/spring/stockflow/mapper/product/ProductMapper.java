@@ -8,4 +8,8 @@ import java.util.List;
 @Mapper
 public interface ProductMapper {
     List<Product> getProducts();
+
+    String findLastProductCodeByDate(String dateStr);
+
+    void addProduct(Product product);
 }

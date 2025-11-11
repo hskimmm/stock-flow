@@ -1,12 +1,18 @@
 package com.spring.stockflow.controller.product;
 
 import com.spring.stockflow.domain.Product;
+import com.spring.stockflow.dto.product.CreateProductDTO;
+import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.service.product.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -25,5 +31,17 @@ public class ProductController {
         model.addAttribute("products", products);
         model.addAttribute("menuActive", "product-list");
         return "product/product-list";
+    }
+
+    @GetMapping("/add")
+    public String addProductForm(Model model) {
+        model.addAttribute("menuActive", "product-add");
+        return "product/product-add";
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<?>> addProduct(@Valid @ModelAttribute CreateProductDTO createProductDTO) {
+        ApiResponse<?> response = productService.addProduct(createProductDTO);
+        return ResponseEntity.ok(response);
     }
 }
