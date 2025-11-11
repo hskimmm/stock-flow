@@ -45,4 +45,14 @@
         WHERE del_yn = 'N'
         AND id = #{id}
     </select>
+
+    <update id="editProduct">
+        UPDATE product SET
+            product_name = #{productName},
+            category = #{category},
+            unit = #{unit},
+            safety_stock = #{safetyStock},
+            remarks = #{remarks}
+        WHERE id = #{id}
+    </update>
 </mapper>

@@ -2,9 +2,11 @@ package com.spring.stockflow.service.product;
 
 import com.spring.stockflow.domain.Product;
 import com.spring.stockflow.dto.product.CreateProductDTO;
+import com.spring.stockflow.dto.product.EditProductDTO;
 import com.spring.stockflow.exception.ProductNotFoundException;
 import com.spring.stockflow.mapper.product.ProductMapper;
 import com.spring.stockflow.response.ApiResponse;
+import com.spring.stockflow.util.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataAccessException;
@@ -82,6 +84,22 @@ public class ProductServiceImpl implements ProductService{
         } catch (Exception e) {
             log.error("상품 조회(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("상품 조회중 오류가 발생하였습니다.");
+        }
+    }
+
+    @Transactional
+    @Override
+    public ApiResponse<?> editProduct(EditProductDTO editProductDTO) {
+        try {
+            Product product = ModelMapperUtils.map(editProductDTO, Product.class);
+            productMapper.editProduct(product);
+            return new ApiResponse<>(true, product.getProductName() + " 상품 정보를 수정하였습니다");
+        } catch (DataAccessException e) {
+            log.error("상품 정보 수정(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("상품 정보 수정중 오류가 발생하였습니다.");
+        } catch (Exception e) {
+            log.error("상품 정보 수정(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("상품 정보 수정중 오류가 발생하였습니다.");
         }
     }
 

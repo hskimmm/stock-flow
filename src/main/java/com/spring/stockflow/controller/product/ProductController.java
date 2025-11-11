@@ -2,6 +2,7 @@ package com.spring.stockflow.controller.product;
 
 import com.spring.stockflow.domain.Product;
 import com.spring.stockflow.dto.product.CreateProductDTO;
+import com.spring.stockflow.dto.product.EditProductDTO;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.service.product.ProductService;
 import jakarta.validation.Valid;
@@ -48,5 +49,19 @@ public class ProductController {
         model.addAttribute("product", product);
         model.addAttribute("menuActive", "product-list");
         return "product/product-detail";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editProductForm(@PathVariable(value = "id") Long id, Model model) {
+        Product product = productService.getProduct(id);
+        model.addAttribute("product", product);
+        model.addAttribute("menuActive", "product-list");
+        return "product/product-edit";
+    }
+
+    @PutMapping
+    public ResponseEntity<ApiResponse<?>> editProduct(@Valid @RequestBody EditProductDTO editProductDTO) {
+        ApiResponse<?> response = productService.editProduct(editProductDTO);
+        return ResponseEntity.ok(response);
     }
 }

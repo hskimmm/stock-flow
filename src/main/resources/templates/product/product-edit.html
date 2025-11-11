@@ -2,6 +2,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}">
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}">
     <title>상품 목록</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -15,56 +17,60 @@
             <!-- 상품 수정 화면 -->
             <div id="product-edit">
                 <div class="form-container">
-                    <div class="form-group">
-                        <label>상품코드</label>
-                        <input type="text" value="PRD-001" disabled>
-                        <div class="hint">수정할 수 없습니다</div>
-                    </div>
+                    <form id="editProductForm">
+                        <input type="hidden" name="id" th:value="${product.id}"/>
+                        <input type="hidden" name="productCode" th:value="${product.productCode}"/>
+                        <div class="form-group">
+                            <label>상품코드</label>
+                            <input type="text" th:value="${product.productCode}" disabled>
+                            <div class="hint">수정할 수 없습니다</div>
+                        </div>
 
-                    <div class="form-group">
-                        <label class="required">상품명</label>
-                        <input type="text" value="A제품">
-                    </div>
+                        <div class="form-group">
+                            <label class="required">상품명</label>
+                            <input type="text" id="productName" name="productName" th:value="${product.productName}">
+                        </div>
 
-                    <div class="form-group">
-                        <label class="required">카테고리</label>
-                        <select>
-                            <option selected>전자</option>
-                            <option>의류</option>
-                            <option>식품</option>
-                            <option>기타</option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label class="required">카테고리</label>
+                            <select name="category">
+                                <option value="전자" th:attr="selected=${product.category == '전자'}">전자</option>
+                                <option value="의류" th:attr="selected=${product.category == '의류'}">의류</option>
+                                <option value="식품" th:attr="selected=${product.category == '식품'}">식품</option>
+                                <option value="기타" th:attr="selected=${product.category == '기타'}">기타</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label>단위</label>
-                        <select>
-                            <option selected>개</option>
-                            <option>박스</option>
-                            <option>kg</option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label>단위</label>
+                            <select name="unit">
+                                <option value="개" th:attr="selected=${product.unit == '개'}">개</option>
+                                <option value="박스" th:attr="selected=${product.unit == '박스'}">박스</option>
+                                <option value="kg" th:attr="selected=${product.unit == 'kg'}">kg</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label class="required">안전재고</label>
-                        <input type="number" value="50">
-                        <div class="hint">이 수량 이하일 때 알림이 표시됩니다</div>
-                    </div>
+                        <div class="form-group">
+                            <label class="required">안전재고</label>
+                            <input type="number" id="safetyStock" name="safetyStock" th:value="${product.safetyStock}">
+                            <div class="hint">이 수량 이하일 때 알림이 표시됩니다</div>
+                        </div>
 
-                    <div class="form-group">
-                        <label>현재재고</label>
-                        <input type="number" value="150" disabled>
-                        <div class="hint">입출고로만 변경 가능합니다</div>
-                    </div>
+                        <div class="form-group">
+                            <label>현재재고</label>
+                            <input type="number" th:value="${product.currentStock}" disabled>
+                            <div class="hint">입출고로만 변경 가능합니다</div>
+                        </div>
 
-                    <div class="form-group">
-                        <label>비고</label>
-                        <textarea>테스트 상품입니다</textarea>
-                    </div>
+                        <div class="form-group">
+                            <label>비고</label>
+                            <textarea id="remarks" name="remarks">[[${product.remarks}]]</textarea>
+                        </div>
+                    </form>
 
                     <div class="form-actions">
-                        <button class="btn btn-primary">수정</button>
-                        <button class="btn" style="background: #95a5a6; color: white;">취소</button>
+                        <button class="btn btn-primary btn-edit">수정</button>
+                        <button class="btn btn-cancel" style="background: #95a5a6; color: white;">취소</button>
                     </div>
                 </div>
             </div>
@@ -73,5 +79,141 @@
 </div>
 
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+
+    const csrfToken = $("meta[name='_csrf']").attr('content');
+    const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
+    const editProductForm = $("#editProductForm");
+
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        $(".btn-edit").on("click", function (e) {
+           e.preventDefault();
+           editProduct();
+        });
+
+        $(".btn-cancel").on("click", function (e) {
+           e.preventDefault();
+           window.location.href = '/product';
+        });
+    }
+
+    //상품정보 수정
+    function editProduct() {
+        const formData = new FormData(editProductForm[0]);
+
+        if (validateInputCheck(formData)) {
+
+            const data = {
+                id : $("input[name='id']").val(),
+                productCode : $("input[name='productCode']").val(),
+                productName : formData.get('productName'),
+                category : formData.get('category'),
+                unit : formData.get('unit'),
+                safetyStock : formData.get('safetyStock'),
+                remarks : formData.get('remarks')
+            }
+
+            $.ajax({
+                url: '/product',
+                method: 'PUT',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(csrfHeader, csrfToken)
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        window.location.href = '/product';
+                    }
+                },
+                error: function (xhr, status, error) {
+                    let response;
+                    try {
+                        response = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                        return e;
+                    }
+
+                    let errorMessage = response.message;
+                    if (xhr.status === 400) {
+                        let errors = response.items;
+                        if (errors['id']) {
+                            alert(errors['id']);
+                            window.location.href = '/product';
+                        } else if (errors['productCode']) {
+                            alert(errors['productCode']);
+                            window.location.href = '/product';
+                        } else if (errors['productName']) {
+                            alert(errors['productName']);
+                            return false;
+                        } else if (errors['category']) {
+                            alert(errors['category']);
+                            return false;
+                        } else if (errors['unit']) {
+                            alert(errors['unit']);
+                            return false;
+                        } else if (errors['safetyStock']) {
+                            alert(errors['safetyStock']);
+                            return false;
+                        }
+                    } else if (xhr.status === 500) {
+                        alert(errorMessage);
+                        return false;
+                    }
+                }
+            });
+        }
+    }
+
+    //Input 태그 유효성 검사
+    function validateInputCheck(formData) {
+        const stockPattern = /^[1-9]\d*$/;
+
+        for (const [key, value] of formData.entries()) {
+            let trimmedValue = value.trim();
+            if (value !== trimmedValue) {
+                formData.set(key, trimmedValue);
+            }
+
+            if (key === 'productName' && trimmedValue === '') {
+                alert("상품명을 입력하세요");
+                $("#productName").focus();
+                return false;
+            }
+
+            if (key === 'category' && trimmedValue === '') {
+                alert("카테고리를 선택하세요");
+                return false;
+            }
+
+            if (key === 'unit' && trimmedValue === '') {
+                alert("단위를 선택하세요");
+                return false;
+            }
+
+            if (key === 'safetyStock' && trimmedValue === '') {
+                alert("안전재고 수량을 입력하세요");
+                $("#safetyStock").focus();
+                return false;
+            }
+
+            if (key === 'safetyStock' && trimmedValue !== '' && !stockPattern.test(trimmedValue)) {
+                alert("안전재고 수량은 1 이상이어야 합니다");
+                $("#safetyStock").focus();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //init
+    $(function () {
+       addButtonEvent();
+    });
+</script>
 </body>
 </html>
