@@ -2,6 +2,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}">
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}">
     <title>입고 등록</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -15,39 +17,38 @@
             <!-- 입고 등록 화면 -->
             <div id="inbound-add">
                 <div class="form-container">
-                    <div class="form-group">
-                        <label class="required">입고일자</label>
-                        <input type="date" value="2024-10-28">
-                    </div>
+                    <form id="addInboundForm">
+                        <div class="form-group">
+                            <label class="required">입고일자</label>
+                            <input type="date" id="inboundDate" name="inboundDate">
+                        </div>
 
-                    <div class="form-group">
-                        <label class="required">상품선택</label>
-                        <select>
-                            <option>선택하세요</option>
-                            <option>A제품 (현재고: 150개)</option>
-                            <option>B제품 (현재고: 30개)</option>
-                            <option>C제품 (현재고: 0개)</option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label class="required">상품선택</label>
+                            <select name="productId">
+                                <option value="">선택하세요</option>
+                                <option th:each="product : ${products}" th:value="${product.id}" th:text="${product.productName + ' (현재고: ' + product.currentStock + product.unit + ')'}"></option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label class="required">입고수량</label>
-                        <input type="number" placeholder="0">
-                    </div>
+                        <div class="form-group">
+                            <label class="required">입고수량</label>
+                            <input type="number" id="quantity" name="quantity" placeholder="0">
+                        </div>
 
-                    <div class="form-group">
-                        <label>공급업체</label>
-                        <input type="text" placeholder="공급업체명">
-                    </div>
+                        <div class="form-group">
+                            <label>공급업체</label>
+                            <input type="text" id="supplier" name="supplier" placeholder="공급업체명">
+                        </div>
 
-                    <div class="form-group">
-                        <label>비고</label>
-                        <textarea placeholder="추가 정보를 입력하세요"></textarea>
-                    </div>
-
+                        <div class="form-group">
+                            <label>비고</label>
+                            <textarea id="remarks" name="remarks" placeholder="추가 정보를 입력하세요"></textarea>
+                        </div>
+                    </form>
                     <div class="form-actions">
-                        <button class="btn btn-primary">입고 등록</button>
-                        <button class="btn" style="background: #95a5a6; color: white;" data-screen="inbound-list">취소</button>
+                        <button class="btn btn-primary btn-create">입고 등록</button>
+                        <button class="btn btn-cancel" style="background: #95a5a6; color: white;" data-screen="inbound-list">취소</button>
                     </div>
                 </div>
             </div>
@@ -56,5 +57,127 @@
 </div>
 
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+
+    const csrfToken = $("meta[name='_csrf']").attr('content');
+    const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
+    const inboundDateInput = $("#inboundDate");
+
+    const addInboundForm = $("#addInboundForm");
+
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        $(".btn-create").on("click", function (e) {
+           e.preventDefault();
+           addInbound();
+        });
+
+        $(".btn-cancel").on("click", function (e) {
+           e.preventDefault();
+           window.location.href = '/inbound';
+        });
+    }
+
+    //입고 등록
+    function addInbound() {
+        const formData = new FormData(addInboundForm[0]);
+
+        if (validateInputCheck(formData)) {
+            $.ajax({
+                url: '/inbound',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(csrfHeader, csrfToken)
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        window.location.href = '/inbound';
+                    }
+                },
+                error: function (xhr, status, error) {
+                    let response;
+                    try {
+                        response = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                        return e;
+                    }
+
+                    let errorMessage = response.message;
+                    if (xhr.status === 400) {
+                        let errors = response.items;
+                        if (errors['inboundDate']) {
+                            alert(errors['inboundDate']);
+                            return false;
+                        } else if (errors['productId']) {
+                            alert(errors['productId']);
+                            return false;
+                        } else if (errors['quantity']) {
+                            alert(errors['quantity']);
+                            return false;
+                        }
+                    } else if (xhr.status === 500) {
+                        alert(errorMessage);
+                        return false;
+                    }
+                }
+            });
+        }
+    }
+
+    //Input 태그 유효성 검사
+    function validateInputCheck(formData) {
+        const stockPattern = /^[1-9]\d*$/;
+
+        for (const [key, value] of  formData.entries()) {
+            let trimmedValue = value.trim();
+            if (value !== trimmedValue) {
+                formData.set(key, trimmedValue);
+            }
+
+            if (key === 'inboundDate' && trimmedValue === '') {
+                alert("입고일자를 선택하세요");
+                return false;
+            }
+
+            if (key === 'productId' && trimmedValue === '') {
+                alert("입고 상품을 선택하세요");
+                return false;
+            }
+
+            if (key === 'quantity' && trimmedValue === '') {
+                alert("입고 수량을 입력하세요");
+                $("#quantity").focus();
+                return false;
+            }
+
+            if (key === 'quantity' && trimmedValue !== '' && !stockPattern.test(trimmedValue)) {
+                alert("입고 수량은 1 이상이어야 합니다");
+                $("#quantity").focus();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //입고일자 초기화
+    function initInboundDate() {
+        //오늘날짜 yyyy-MM-dd 형식(오늘 날짜 및 과거 날짜만 선택 가능, 미래 날짜는 X)
+        const today = new Date().toISOString().split('T')[0];
+        inboundDateInput.val(today);
+        inboundDateInput.attr('max', today);
+    }
+
+    //init
+    $(function () {
+        addButtonEvent();
+        initInboundDate();
+    });
+</script>
 </body>
 </html>

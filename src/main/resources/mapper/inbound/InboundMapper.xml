@@ -14,4 +14,41 @@
         FROM v_inbound_list
         WHERE id = #{id}
     </select>
+
+    <select id="getProducts" resultType="product">
+        SELECT id, product_name, current_stock, unit
+        FROM product
+        WHERE del_yn = 'N'
+    </select>
+
+    <select id="findLastInboundCodeByDate" resultType="String">
+        SELECT inbound_no
+        FROM inbound
+        WHERE inbound_no LIKE CONCAT('IN-', #{dateStr}, '%')
+        ORDER BY inbound_no DESC
+        LIMIT 1
+    </select>
+
+    <insert id="addInbound">
+        INSERT INTO inbound
+        (
+            inbound_no,
+            product_id,
+            inbound_date,
+            quantity,
+            supplier,
+            remarks,
+            reg_user_id
+        )
+        VALUES
+        (
+            #{inboundNo},
+            #{productId},
+            #{inboundDate},
+            #{quantity},
+            #{supplier},
+            #{remarks},
+            #{regUserId}
+        )
+    </insert>
 </mapper>
