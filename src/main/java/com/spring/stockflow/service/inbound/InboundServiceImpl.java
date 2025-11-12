@@ -98,7 +98,7 @@ public class InboundServiceImpl implements InboundService{
     }
 
     //입고 번호 생성
-    public String generateInboundCode() {
+    private String generateInboundCode() {
         String dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String prefix = "IN-" + dateStr + "-";
 
