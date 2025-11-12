@@ -22,7 +22,6 @@
                         <button class="btn btn-primary">검색</button>
                     </div>
                 </div>
-
                 <table>
                     <thead>
                     <tr>
@@ -36,32 +35,14 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>2024-10-28</td>
-                        <td>A제품</td>
-                        <td>100개</td>
-                        <td>ㅇㅇ업체</td>
-                        <td>홍길동</td>
+                    <tr th:each="inbound : ${inbounds}">
+                        <td th:text="${inbound.id}"></td>
+                        <td th:text="${inbound.inboundDate}"></td>
+                        <td th:text="${inbound.productName}"></td>
+                        <td th:text="${inbound.quantity}"></td>
+                        <td th:text="${inbound.supplier}"></td>
+                        <td th:text="${inbound.regUserId}"></td>
                         <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/inbound/detail}'|">보기</button></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>2024-10-27</td>
-                        <td>B제품</td>
-                        <td>50개</td>
-                        <td>ㅁㅁ업체</td>
-                        <td>김철수</td>
-                        <td><button class="btn btn-primary" style="padding: 5px 10px;" data-screen="inbound-detail">보기</button></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>2024-10-26</td>
-                        <td>C제품</td>
-                        <td>200개</td>
-                        <td>ㄱㄱ업체</td>
-                        <td>이영희</td>
-                        <td><button class="btn btn-primary" style="padding: 5px 10px;" data-screen="inbound-detail">보기</button></td>
                     </tr>
                     </tbody>
                 </table>

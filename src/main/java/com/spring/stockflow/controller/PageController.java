@@ -6,12 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class PageController {
-    @GetMapping("/inbound/list")
-    public String inboundList(Model model) {
-        model.addAttribute("menuActive", "inbound-list");
-        return "inbound/inbound-list";
-    }
-
     @GetMapping("/inbound/add")
     public String inboundAdd(Model model) {
         model.addAttribute("menuActive", "inbound-add");

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.stockflow.mapper.inbound.InboundMapper">
+    <select id="getInbounds" resultType="inbound">
+        SELECT id, inbound_no, product_id, product_name, product_code, inbound_date, quantity, supplier, remarks, reg_user_id, reg_user_name, reg_date
+        FROM v_inbound_list
+    </select>
+</mapper>
