@@ -8,11 +8,15 @@ import lombok.Getter;
 public class Pagination {
 
     private int pageNum = 1;
-    private int amount = 10;
+    private int amount = 3;
 
     private String[] types;
     private String typeStr;
     private String keyword;
+
+    //날짜 검색
+    private String startDate;
+    private String endDate;
 
     public void setPageNum(int pageNum) {
         if (pageNum <= 0) {

@@ -2,6 +2,7 @@ package com.spring.stockflow.controller.product;
 
 import com.spring.stockflow.domain.Product;
 import com.spring.stockflow.dto.PageDTO;
+import com.spring.stockflow.dto.UserDTO;
 import com.spring.stockflow.dto.product.CreateProductDTO;
 import com.spring.stockflow.dto.product.EditProductDTO;
 import com.spring.stockflow.response.ApiResponse;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +45,8 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> addProduct(@Valid @ModelAttribute CreateProductDTO createProductDTO) {
-        ApiResponse<?> response = productService.addProduct(createProductDTO);
+    public ResponseEntity<ApiResponse<?>> addProduct(@Valid @ModelAttribute CreateProductDTO createProductDTO, @AuthenticationPrincipal UserDTO userDTO) {
+        ApiResponse<?> response = productService.addProduct(createProductDTO, userDTO.getId());
         return ResponseEntity.ok(response);
     }
 

@@ -16,13 +16,12 @@
             <div id="inbound-list">
                 <div class="table-header">
                     <div class="search-box">
-                        <input type="date" value="2024-10-01">
+                        <input type="date" id="startDate" name="startDate" th:value="${pagination.startDate}" required>
                         <span style="padding: 10px;">~</span>
-                        <input type="date" value="2024-10-28">
-                        <button class="btn btn-primary">검색</button>
+                        <input type="date" id="endDate" name="endDate" th:value="${pagination.endDate}" required>
+                        <button class="btn btn-primary btn-search">검색</button>
                     </div>
                 </div>
-
                 <table>
                     <thead>
                     <tr>
@@ -36,40 +35,128 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>2024-10-28</td>
-                        <td>A제품</td>
-                        <td>100개</td>
-                        <td>ㅇㅇ업체</td>
-                        <td>홍길동</td>
-                        <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/inbound/detail}'|">보기</button></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>2024-10-27</td>
-                        <td>B제품</td>
-                        <td>50개</td>
-                        <td>ㅁㅁ업체</td>
-                        <td>김철수</td>
-                        <td><button class="btn btn-primary" style="padding: 5px 10px;" data-screen="inbound-detail">보기</button></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>2024-10-26</td>
-                        <td>C제품</td>
-                        <td>200개</td>
-                        <td>ㄱㄱ업체</td>
-                        <td>이영희</td>
-                        <td><button class="btn btn-primary" style="padding: 5px 10px;" data-screen="inbound-detail">보기</button></td>
+                    <tr th:each="inbound : ${inbounds}">
+                        <td th:text="${inbound.id}"></td>
+                        <td th:text="${inbound.inboundDate}"></td>
+                        <td th:text="${inbound.productName}"></td>
+                        <td th:text="${inbound.quantity}"></td>
+                        <td th:text="${inbound.supplier}"></td>
+                        <td th:text="${inbound.regUserId}"></td>
+                        <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/inbound/{id}(id=${inbound.id}, pageNum=${page.pagination.pageNum}, startDate=${page.pagination.startDate}, endDate=${page.pagination.endDate})}'|">보기</button></td>
                     </tr>
                     </tbody>
                 </table>
+                <!-- 페이징 -->
+                <div class="pagination">
+                    <div class="page-item" th:if="${page.prev}">
+                        <a>Previous</a>
+                    </div>
+                    <div class="page-item" th:each="num : ${#numbers.sequence(page.startPage, page.endPage)}">
+                        <a th:class="${page.pagination.pageNum == num} ? 'active' : ''" th:href="${num}">[[${num}]]</a>
+                    </div>
+                    <div class="page-item" th:if="${page.next}">
+                        <a>Next</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<form id="pageFrom">
+    <input type="hidden" name="pageNum" th:value="${pagination.pageNum}"/>
+    <input type="hidden" name="startDate" th:value="${pagination.startDate}"/>
+    <input type="hidden" name="endDate" th:value="${pagination.endDate}"/>
+</form>
+
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+
+    const pageUL = $(".pagination");
+    const pageForm =$("#pageFrom");
+
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        pageUL.on("click", "a", function (e) {
+           e.preventDefault();
+           let pageNum = $(this).attr('href');
+           pageForm.find("input[name='pageNum']").val(pageNum);
+           pageForm.attr('action', '/inbound');
+           pageForm.submit();
+        });
+
+        //종료일이 시작일보다 이전이면 시작일로 자동조정
+        $("#startDate").on("change", function () {
+            const startDate = $(this).val();
+            const endDate = $("#endDate").val();
+
+            if (endDate && startDate > endDate) {
+                $("#endDate").val(startDate);
+            }
+
+            $("#endDate").attr('min', startDate);
+        });
+
+        //시작일이 종료일보다 이후면 종료일로 자동조정
+        $("#endDate").on("change", function () {
+           const startDate = $("#startDate").val();
+           const endDate = $(this).val();
+
+           if (startDate && endDate < startDate) {
+               $("#startDate").val(endDate)
+           }
+
+           $("#startDate").attr('max', endDate);
+        });
+
+        $(".btn-search").on("click", function (e) {
+           e.preventDefault();
+           let startDate = $("input[name='startDate']").val();
+           let endDate = $("input[name='endDate']").val();
+
+           pageForm.find("input[name='pageNum']").val(1);
+           pageForm.find("input[name='startDate']").val(startDate);
+           pageForm.find("input[name='endDate']").val(endDate);
+
+           pageForm.attr('action', '/inbound');
+           pageForm.submit();
+        });
+    }
+
+    //날짜 범위 초기화(최근 1개월)
+    function initDateRange() {
+        const startInput = $("#startDate");
+        const endInput = $("#endDate");
+
+        //검색 시 initDateRange 호출하여 값이 덮어 씌워지는 버그 방지
+        if (startInput.val() && endInput.val()) return;
+
+        const today = new Date();
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(today.getMonth() - 1);
+
+        const startDateStr = formatDate(oneMonthAgo);
+        const endDateStr = formatDate(today);
+
+        $("#startDate").val(startDateStr);
+        $("#endDate").val(endDateStr);
+
+        $("#endDate").attr('max', endDateStr);
+    }
+
+    //DATE -> YYYY-MM-DD 형식 변환
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    //init
+    $(function () {
+       addButtonEvent();
+       initDateRange();
+    });
+</script>
 </body>
 </html>

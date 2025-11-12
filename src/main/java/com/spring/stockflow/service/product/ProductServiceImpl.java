@@ -1,11 +1,15 @@
 package com.spring.stockflow.service.product;
 
+import com.spring.stockflow.domain.Inbound;
 import com.spring.stockflow.domain.Product;
+import com.spring.stockflow.dto.inbound.CreateInboundDTO;
 import com.spring.stockflow.dto.product.CreateProductDTO;
 import com.spring.stockflow.dto.product.EditProductDTO;
 import com.spring.stockflow.exception.ProductNotFoundException;
+import com.spring.stockflow.mapper.inbound.InboundMapper;
 import com.spring.stockflow.mapper.product.ProductMapper;
 import com.spring.stockflow.response.ApiResponse;
+import com.spring.stockflow.service.inbound.InboundService;
 import com.spring.stockflow.util.ModelMapperUtils;
 import com.spring.stockflow.util.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,9 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService{
 
     private final ProductMapper productMapper;
+    private final InboundMapper inboundMapper;
+
+    private final InboundService inboundService;
 
     @Transactional(readOnly = true)
     @Override
@@ -41,13 +48,8 @@ public class ProductServiceImpl implements ProductService{
 
     @Transactional
     @Override
-    public ApiResponse<?> addProduct(CreateProductDTO createProductDTO) {
+    public ApiResponse<?> addProduct(CreateProductDTO createProductDTO, Long id) {
         try {
-            Integer initialStock = createProductDTO.getInitialStock();
-            if (initialStock != null && initialStock > 0) {
-                //초기 재고 있을 시 입고 내역 생성
-            }
-
             String productCode = generateProductCode();
 
             Product product = Product.builder()
@@ -59,6 +61,19 @@ public class ProductServiceImpl implements ProductService{
                     .remarks(createProductDTO.getRemarks())
                     .build();
             productMapper.addProduct(product);
+
+            //초기재고가 있을 경우 입고내역 생성
+            Integer initialStock = createProductDTO.getInitialStock();
+            if (initialStock != null && initialStock > 0) {
+                CreateInboundDTO inboundDTO = CreateInboundDTO.builder()
+                        .productId(product.getId())
+                        .inboundDate(LocalDate.now())
+                        .quantity(initialStock)
+                        .supplier(createProductDTO.getInitialSupplier())
+                        .remarks(createProductDTO.getInitialInboundRemarks())
+                        .build();
+                inboundService.addInbound(inboundDTO, id);
+            }
 
             return new ApiResponse<>(true, product.getProductName() + " 상품을 등록 하였습니다");
         } catch (DataAccessException e) {
