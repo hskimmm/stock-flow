@@ -12,7 +12,7 @@ import java.util.List;
 public interface ProductService {
     List<Product> getProducts(Pagination pagination);
 
-    ApiResponse<?> addProduct(@Valid CreateProductDTO createProductDTO);
+    ApiResponse<?> addProduct(@Valid CreateProductDTO createProductDTO, Long id);
 
     Product getProduct(Long id);
 

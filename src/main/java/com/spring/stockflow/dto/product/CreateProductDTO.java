@@ -21,7 +21,9 @@ public class CreateProductDTO {
     @NotNull(message = "안전재고 수량을 입력하세요")
     private Integer safetyStock;
 
-    private Integer initialStock;
+    private Integer initialStock; //초기재고
+    private String initialSupplier; //초기재고 공급업체
+    private String initialInboundRemarks; //초기입고 비고
     private String unit;
     private String remarks;
 }

@@ -29,7 +29,7 @@
         LIMIT 1
     </select>
 
-    <insert id="addProduct">
+    <insert id="addProduct" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO product
         (
             product_code,
