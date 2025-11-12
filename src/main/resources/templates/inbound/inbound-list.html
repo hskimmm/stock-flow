@@ -42,19 +42,19 @@
                         <td th:text="${inbound.quantity}"></td>
                         <td th:text="${inbound.supplier}"></td>
                         <td th:text="${inbound.regUserId}"></td>
-                        <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/inbound/{id}(id=${inbound.id})}'|">보기</button></td>
+                        <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/inbound/{id}(id=${inbound.id}, pageNum=${page.pagination.pageNum})}'|">보기</button></td>
                     </tr>
                     </tbody>
                 </table>
                 <!-- 페이징 -->
                 <div class="pagination">
-                    <div class="page-item">
+                    <div class="page-item" th:if="${page.prev}">
                         <a>Previous</a>
                     </div>
-                    <div class="page-item">
-                        <a class="active">1</a>
+                    <div class="page-item" th:each="num : ${#numbers.sequence(page.startPage, page.endPage)}">
+                        <a th:class="${page.pagination.pageNum == num} ? 'active' : ''" th:href="${num}">[[${num}]]</a>
                     </div>
-                    <div class="page-item">
+                    <div class="page-item" th:if="${page.next}">
                         <a>Next</a>
                     </div>
                 </div>
@@ -63,6 +63,31 @@
     </div>
 </div>
 
+<form id="pageFrom">
+    <input type="hidden" name="pageNum">
+</form>
+
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+
+    const pageUL = $(".pagination");
+    const pageForm =$("#pageFrom");
+
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        pageUL.on("click", "a", function (e) {
+           e.preventDefault();
+           let pageNum = $(this).attr('href');
+           pageForm.find("input[name='pageNum']").val(pageNum);
+           pageForm.attr('action', '/inbound');
+           pageForm.submit();
+        });
+    }
+
+    //init
+    $(function () {
+       addButtonEvent();
+    });
+</script>
 </body>
 </html>

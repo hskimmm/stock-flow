@@ -5,6 +5,7 @@ import com.spring.stockflow.domain.Product;
 import com.spring.stockflow.dto.inbound.CreateInboundDTO;
 import com.spring.stockflow.mapper.inbound.InboundMapper;
 import com.spring.stockflow.response.ApiResponse;
+import com.spring.stockflow.util.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataAccessException;
@@ -24,9 +25,9 @@ public class InboundServiceImpl implements InboundService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<Inbound> getInbounds() {
+    public List<Inbound> getInbounds(Pagination pagination) {
         try {
-            return inboundMapper.getInbounds();
+            return inboundMapper.getInbounds(pagination);
         } catch (DataAccessException e) {
             log.error("입고 내역 조회(데이터베이스 오류) = {}", e.getMessage());
             throw new RuntimeException("입고 내역 조회 중 오류가 발생하였습니다");
@@ -88,6 +89,12 @@ public class InboundServiceImpl implements InboundService{
             log.error("상품 등록(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("상품 등록 중 오류가 발생하였습니다");
         }
+    }
+
+    @Transactional
+    @Override
+    public int getTotalInbound(Pagination pagination) {
+        return inboundMapper.getTotalInbound(pagination);
     }
 
     //입고 번호 생성

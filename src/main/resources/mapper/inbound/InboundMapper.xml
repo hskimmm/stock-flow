@@ -7,6 +7,7 @@
         SELECT id, inbound_no, product_id, product_name, product_code, inbound_date, quantity, supplier, remarks, reg_user_id, reg_user_name, reg_date
         FROM v_inbound_list
         ORDER BY inbound_date DESC
+        LIMIT #{skip}, #{amount}
     </select>
 
     <select id="getInbound" resultType="inbound">
@@ -51,4 +52,10 @@
             #{regUserId}
         )
     </insert>
+
+    <select id="getTotalInbound" resultType="int">
+        SELECT COUNT(id)
+        FROM inbound
+        WHERE id > 0
+    </select>
 </mapper>

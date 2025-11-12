@@ -2,10 +2,12 @@ package com.spring.stockflow.controller.inbound;
 
 import com.spring.stockflow.domain.Inbound;
 import com.spring.stockflow.domain.Product;
+import com.spring.stockflow.dto.PageDTO;
 import com.spring.stockflow.dto.UserDTO;
 import com.spring.stockflow.dto.inbound.CreateInboundDTO;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.service.inbound.InboundService;
+import com.spring.stockflow.util.Pagination;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,15 +28,18 @@ public class InboundController {
     private final InboundService inboundService;
 
     @GetMapping
-    public String getInbounds(Model model) {
-        List<Inbound> inbounds = inboundService.getInbounds();
+    public String getInbounds(@ModelAttribute(value = "pagination") Pagination pagination, Model model) {
+        List<Inbound> inbounds = inboundService.getInbounds(pagination);
+        PageDTO pageDTO = new PageDTO(pagination, inboundService.getTotalInbound(pagination));
+
         model.addAttribute("inbounds", inbounds);
+        model.addAttribute("page", pageDTO);
         model.addAttribute("menuActive", "inbound-list");
         return "inbound/inbound-list";
     }
 
     @GetMapping("/{id}")
-    public String getInbound(@PathVariable(value = "id") Long id, Model model) {
+    public String getInbound(@PathVariable(value = "id") Long id, @ModelAttribute(value = "pagination") Pagination pagination, Model model) {
         Inbound inbound = inboundService.getInbound(id);
         model.addAttribute("inbound", inbound);
         model.addAttribute("menuActive", "inbound-detail");
