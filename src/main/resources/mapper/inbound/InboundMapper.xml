@@ -3,9 +3,21 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.stockflow.mapper.inbound.InboundMapper">
+
+    <sql id="search">
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND (
+                inbound_date BETWEEN #{startDate} AND #{endDate}
+            )
+        </if>
+    </sql>
+
+
     <select id="getInbounds" resultType="inbound">
         SELECT id, inbound_no, product_id, product_name, product_code, inbound_date, quantity, supplier, remarks, reg_user_id, reg_user_name, reg_date
         FROM v_inbound_list
+        WHERE id > 0
+        <include refid="search"/>
         ORDER BY inbound_date DESC
         LIMIT #{skip}, #{amount}
     </select>
@@ -57,5 +69,6 @@
         SELECT COUNT(id)
         FROM inbound
         WHERE id > 0
+        <include refid="search"/>
     </select>
 </mapper>

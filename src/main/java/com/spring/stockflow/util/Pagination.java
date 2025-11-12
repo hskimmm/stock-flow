@@ -14,6 +14,10 @@ public class Pagination {
     private String typeStr;
     private String keyword;
 
+    //날짜 검색
+    private String startDate;
+    private String endDate;
+
     public void setPageNum(int pageNum) {
         if (pageNum <= 0) {
             this.pageNum = 1;
