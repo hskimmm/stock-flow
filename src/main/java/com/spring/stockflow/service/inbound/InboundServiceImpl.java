@@ -30,4 +30,18 @@ public class InboundServiceImpl implements InboundService{
             throw new RuntimeException("입고 내역 조회 중 오류가 발생하였습니다");
         }
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Inbound getInbound(Long id) {
+        try {
+            return inboundMapper.getInbound(id);
+        } catch (DataAccessException e) {
+            log.error("입고 상세 조회(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("입고 상세 조회 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("입고 상세 조회(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("입고 상세 조회 중 오류가 발생하였습니다");
+        }
+    }
 }

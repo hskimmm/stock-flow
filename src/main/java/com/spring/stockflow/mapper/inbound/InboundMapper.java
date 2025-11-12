@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface InboundMapper {
     List<Inbound> getInbounds();
+
+    Inbound getInbound(Long id);
 }

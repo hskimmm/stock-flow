@@ -42,10 +42,22 @@
                         <td th:text="${inbound.quantity}"></td>
                         <td th:text="${inbound.supplier}"></td>
                         <td th:text="${inbound.regUserId}"></td>
-                        <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/inbound/detail}'|">보기</button></td>
+                        <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/inbound/{id}(id=${inbound.id})}'|">보기</button></td>
                     </tr>
                     </tbody>
                 </table>
+                <!-- 페이징 -->
+                <div class="pagination">
+                    <div class="page-item">
+                        <a>Previous</a>
+                    </div>
+                    <div class="page-item">
+                        <a class="active">1</a>
+                    </div>
+                    <div class="page-item">
+                        <a>Next</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

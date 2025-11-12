@@ -16,49 +16,48 @@
             <div id="inbound-detail">
                 <div class="form-container">
                     <h3 style="margin-bottom: 20px; text-align: center;">입고 상세 정보</h3>
-
                     <div class="form-group">
                         <label>입고번호</label>
-                        <div class="info-text">IN-20241028-001</div>
+                        <div class="info-text" th:text="${inbound.inboundNo}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>입고일자</label>
-                        <div class="info-text">2024-10-28</div>
+                        <div class="info-text" th:text="${inbound.inboundDate}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>상품명</label>
-                        <div class="info-text">A제품 (PRD-001)</div>
+                        <div class="info-text" th:text="${inbound.productName}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>입고수량</label>
-                        <div class="info-text" style="background: #d4edda; color: #155724; font-weight: bold;">100개</div>
+                        <div class="info-text" style="background: #d4edda; color: #155724; font-weight: bold;" th:text="${inbound.quantity}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>공급업체</label>
-                        <div class="info-text">ㅇㅇ업체</div>
+                        <div class="info-text" th:text="${inbound.supplier}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>등록자</label>
-                        <div class="info-text">홍길동</div>
+                        <div class="info-text" th:text="${inbound.regUserId}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>등록일시</label>
-                        <div class="info-text">2024-10-28 14:30:25</div>
+                        <div class="info-text" th:text="${#temporals.format(inbound.regDate, 'yyyy-MM-dd')}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>비고</label>
-                        <div class="info-text">정상 입고 처리</div>
+                        <div class="info-text" th:text="${inbound.remarks}"></div>
                     </div>
 
                     <div class="form-actions">
-                        <button class="btn btn-primary" data-screen="inbound-list">확인</button>
+                        <button class="btn btn-primary btn-cancel" data-screen="inbound-list">확인</button>
                     </div>
                 </div>
             </div>
@@ -67,5 +66,19 @@
 </div>
 
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        $(".btn-cancel").on("click", function (e) {
+           e.preventDefault();
+           window.location.href = '/inbound';
+        });
+    }
+
+    //init
+    $(function () {
+       addButtonEvent();
+    });
+</script>
 </body>
 </html>

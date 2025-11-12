@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -25,5 +26,13 @@ public class InboundController {
         model.addAttribute("inbounds", inbounds);
         model.addAttribute("menuActive", "inbound-list");
         return "inbound/inbound-list";
+    }
+
+    @GetMapping("/{id}")
+    public String getInbound(@PathVariable(value = "id") Long id, Model model) {
+        Inbound inbound = inboundService.getInbound(id);
+        model.addAttribute("inbound", inbound);
+        model.addAttribute("menuActive", "inbound-detail");
+        return "inbound/inbound-detail";
     }
 }

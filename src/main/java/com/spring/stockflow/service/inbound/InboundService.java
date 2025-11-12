@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface InboundService {
     List<Inbound> getInbounds();
+
+    Inbound getInbound(Long id);
 }
