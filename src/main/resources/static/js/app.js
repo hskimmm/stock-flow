@@ -14,11 +14,15 @@ $(document).ready(function() {
 
     // 출고 시 현재고 표시
     $('#product-select').on('change', function() {
-        let stock = $(this).val();
+        let stock = $(this).find("option:selected").data('stock');
+        let unit = $(this).find("option:selected").data('unit');
+
+        console.log(stock);
+
         let $stockDiv = $('#current-stock');
 
         if (stock) {
-            $stockDiv.text('현재고량: ' + stock + '개');
+            $stockDiv.text('현재고량: ' + stock + unit);
             if (stock > 0) {
                 $stockDiv.css('background', '#e8f4f8');
             } else {

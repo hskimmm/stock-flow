@@ -10,4 +10,8 @@ public interface OutBoundMapper {
     List<OutBound> getOutBounds();
 
     OutBound getOutBound(Long id);
+
+    void addOutBound(OutBound outBound);
+
+    String findLastOutboundCodeByDate(String dateStr);
 }

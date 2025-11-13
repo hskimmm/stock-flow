@@ -14,4 +14,35 @@
         FROM v_outbound_list
         WHERE id = #{id}
     </select>
+
+    <insert id="addOutBound">
+        INSERT INTO outbound
+        (
+            outbound_no,
+            product_id,
+            outbound_date,
+            quantity,
+            reason,
+            remarks,
+            reg_user_id
+        )
+        VALUES
+        (
+            #{outBoundNo},
+            #{productId},
+            #{outboundDate},
+            #{quantity},
+            #{reason},
+            #{remarks},
+            #{regUserId}
+        )
+    </insert>
+
+    <select id="findLastOutboundCodeByDate" resultType="String">
+        SELECT outbound_no
+        FROM outbound
+        WHERE outbound_no LIKE CONCAT('OUT-', #{dateStr}, '%')
+        ORDER BY outbound_no DESC
+        LIMIT 1
+    </select>
 </mapper>

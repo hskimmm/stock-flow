@@ -6,12 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class PageController {
-    @GetMapping("/outbound/add")
-    public String outboundAdd(Model model) {
-        model.addAttribute("menuActive", "outbound-add");
-        return "outbound/outbound-add";
-    }
-
     @GetMapping("/inventory")
     public String inventory(Model model) {
         model.addAttribute("menuActive", "inventory");
