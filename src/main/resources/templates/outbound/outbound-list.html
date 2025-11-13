@@ -16,13 +16,12 @@
             <div id="outbound-list">
                 <div class="table-header">
                     <div class="search-box">
-                        <input type="date" value="2024-10-01">
+                        <input type="date" id="startDate" name="startDate" th:value="${pagination.startDate}">
                         <span style="padding: 10px;">~</span>
-                        <input type="date" value="2024-10-28">
-                        <button class="btn btn-primary">검색</button>
+                        <input type="date" id="endDate" name="endDate" th:value="${pagination.endDate}">
+                        <button class="btn btn-primary btn-search">검색</button>
                     </div>
                 </div>
-
                 <table>
                     <thead>
                     <tr>
@@ -36,40 +35,100 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>2024-10-28</td>
-                        <td>B제품</td>
-                        <td>50개</td>
-                        <td>판매</td>
-                        <td>김철수</td>
-                        <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/outbound/detail}'|">보기</button></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>2024-10-27</td>
-                        <td>D제품</td>
-                        <td>30개</td>
-                        <td>판매</td>
-                        <td>박민수</td>
-                        <td><button class="btn btn-primary" style="padding: 5px 10px;" data-screen="outbound-detail">보기</button></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>2024-10-26</td>
-                        <td>A제품</td>
-                        <td>20개</td>
-                        <td>폐기</td>
-                        <td>홍길동</td>
-                        <td><button class="btn btn-primary" style="padding: 5px 10px;" data-screen="outbound-detail">보기</button></td>
+                    <tr th:each="outbound: ${outBounds}">
+                        <td th:text="${outbound.id}"></td>
+                        <td th:text="${outbound.outboundDate}"></td>
+                        <td th:text="${outbound.productName}"></td>
+                        <td th:text="${outbound.quantity}"></td>
+                        <td th:text="${outbound.reason}"></td>
+                        <td th:text="${outbound.regUserName}">김철수</td>
+                        <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/outbound/{id}(id=${outbound.id}, pageNum=${page.pagination.pageNum}, startDate=${pagination.startDate}, endDate=${pagination.endDate})}'|">보기</button></td>
                     </tr>
                     </tbody>
                 </table>
+                <!-- 페이징 -->
+                <div class="pagination">
+                    <div class="page-item" th:if="${page.prev}">
+                        <a>Previous</a>
+                    </div>
+                    <div class="page-item" th:each="num : ${#numbers.sequence(page.startPage, page.endPage)}">
+                        <a th:class="${page.pagination.pageNum == num} ? 'active' : ''" th:href="${num}">[[${num}]]</a>
+                    </div>
+                    <div class="page-item" th:if="${page.next}">
+                        <a>Next</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<form id="pageForm">
+    <input type="hidden" name="pageNum" th:value="${pagination.pageNum}"/>
+    <input type="hidden" name="startDate" th:value="${pagination.startDate}"/>
+    <input type="hidden" name="endDate" th:value="${pagination.endDate}"/>
+</form>
+
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+
+    const pageUL = $(".pagination");
+    const pageForm = $("#pageForm");
+
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        pageUL.on("click", "a", function (e) {
+           e.preventDefault();
+           let pageNum = $(this).attr('href');
+           $("input[name='pageNum']").val(pageNum);
+
+           pageForm.attr('action', '/outbound');
+           pageForm.submit();
+        });
+
+        //종료일이 시작일보다 이전이면 시작일로 자동조정
+        $("#startDate").on("change", function () {
+            const startDate = $(this).val();
+            const endDate = $("#endDate").val();
+
+            if (endDate && startDate > endDate) {
+                $("#endDate").val(startDate);
+            }
+
+            $("#endDate").attr('min', startDate);
+        });
+
+        //시작일이 종료일보다 이후면 종료일로 자동조정
+        $("#endDate").on("change", function () {
+            const startDate = $("#startDate").val();
+            const endDate = $(this).val();
+
+            if (startDate && endDate < startDate) {
+                $("#startDate").val(endDate)
+            }
+
+            $("#startDate").attr('max', endDate);
+        });
+
+        $(".btn-search").on("click", function (e) {
+            e.preventDefault();
+            let startDate = $("input[name='startDate']").val();
+            let endDate = $("input[name='endDate']").val();
+
+            pageForm.find("input[name='pageNum']").val(1);
+            pageForm.find("input[name='startDate']").val(startDate);
+            pageForm.find("input[name='endDate']").val(endDate);
+
+            pageForm.attr('action', '/outbound');
+            pageForm.submit();
+        });
+    }
+
+    //init
+    $(function () {
+       addButtonEvent();
+       initDateRange();
+    });
+</script>
 </body>
 </html>

@@ -3,6 +3,7 @@ package com.spring.stockflow.controller.product;
 import com.spring.stockflow.domain.Product;
 import com.spring.stockflow.dto.PageDTO;
 import com.spring.stockflow.dto.UserDTO;
+import com.spring.stockflow.dto.history.InventoryHistoryDTO;
 import com.spring.stockflow.dto.product.CreateProductDTO;
 import com.spring.stockflow.dto.product.EditProductDTO;
 import com.spring.stockflow.response.ApiResponse;
@@ -53,6 +54,9 @@ public class ProductController {
     @GetMapping("/detail/{id}")
     public String detailProduct(@PathVariable(value = "id") Long id, @ModelAttribute(value = "pagination") Pagination pagination, Model model) {
         Product product = productService.getProduct(id);
+        List<InventoryHistoryDTO> inventoryHistoryDTO = productService.getProductHistory(id);
+
+        model.addAttribute("inventoryHistory", inventoryHistoryDTO);
         model.addAttribute("product", product);
         model.addAttribute("menuActive", "product-list");
         return "product/product-detail";
