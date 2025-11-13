@@ -34,3 +34,32 @@ $(document).ready(function() {
         }
     });
 });
+
+//날짜 범위 초기화(최근 1개월)
+function initDateRange() {
+    const startInput = $("#startDate");
+    const endInput = $("#endDate");
+
+    //검색 시 initDateRange 호출하여 값이 덮어 씌워지는 버그 방지
+    if (startInput.val() && endInput.val()) return;
+
+    const today = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(today.getMonth() - 1);
+
+    const startDateStr = formatDate(oneMonthAgo);
+    const endDateStr = formatDate(today);
+
+    $("#startDate").val(startDateStr);
+    $("#endDate").val(endDateStr);
+
+    $("#endDate").attr('max', endDateStr);
+}
+
+//DATE -> YYYY-MM-DD 형식 변환
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
