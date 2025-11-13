@@ -7,6 +7,7 @@
         FROM v_outbound_list
         WHERE id > 0
         ORDER BY outbound_date DESC
+        LIMIT #{skip}, #{amount}
     </select>
 
     <select id="getOutBound" resultType="outbound">
@@ -44,5 +45,11 @@
         WHERE outbound_no LIKE CONCAT('OUT-', #{dateStr}, '%')
         ORDER BY outbound_no DESC
         LIMIT 1
+    </select>
+
+    <select id="getTotalOutBound" resultType="int">
+        SELECT COUNT(id)
+        FROM outbound
+        WHERE id > 0
     </select>
 </mapper>

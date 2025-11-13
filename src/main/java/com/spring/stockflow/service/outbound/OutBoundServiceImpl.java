@@ -4,6 +4,7 @@ import com.spring.stockflow.domain.OutBound;
 import com.spring.stockflow.dto.outbound.CreateOutBoundDTO;
 import com.spring.stockflow.mapper.outbound.OutBoundMapper;
 import com.spring.stockflow.response.ApiResponse;
+import com.spring.stockflow.util.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataAccessException;
@@ -22,9 +23,9 @@ public class OutBoundServiceImpl implements OutBoundService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<OutBound> getOutBounds() {
+    public List<OutBound> getOutBounds(Pagination pagination) {
         try {
-            return outBoundMapper.getOutBounds();
+            return outBoundMapper.getOutBounds(pagination);
         } catch (DataAccessException e) {
             log.error("출고목록 조회(데이터베이스 오류) = {}", e.getMessage());
             throw new RuntimeException("출고목록 조회 중 오류가 발생하였습니다");
@@ -72,6 +73,12 @@ public class OutBoundServiceImpl implements OutBoundService{
             log.error("출고 등록(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("출고 등록 중 오류가 발생하였습니다");
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getTotalOutBound(Pagination pagination) {
+        return outBoundMapper.getTotalOutBound(pagination);
     }
 
     //출고번호 생성
