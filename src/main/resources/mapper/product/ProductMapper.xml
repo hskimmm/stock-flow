@@ -79,4 +79,8 @@
         WHERE del_yn = 'N'
         <include refid="search"/>
     </select>
+
+    <select id="getProductHistory" resultType="com.spring.stockflow.dto.history.InventoryHistoryDTO">
+        SELECT * FROM v_inventory_history where product_id = #{id} LIMIT 5
+    </select>
 </mapper>

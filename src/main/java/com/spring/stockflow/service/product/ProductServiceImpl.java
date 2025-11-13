@@ -2,6 +2,7 @@ package com.spring.stockflow.service.product;
 
 import com.spring.stockflow.domain.Inbound;
 import com.spring.stockflow.domain.Product;
+import com.spring.stockflow.dto.history.InventoryHistoryDTO;
 import com.spring.stockflow.dto.inbound.CreateInboundDTO;
 import com.spring.stockflow.dto.product.CreateProductDTO;
 import com.spring.stockflow.dto.product.EditProductDTO;
@@ -142,6 +143,20 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public int getTotalCount(Pagination pagination) {
         return productMapper.getTotalCount(pagination);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<InventoryHistoryDTO> getProductHistory(Long id) {
+        try {
+            return productMapper.getProductHistory(id);
+        } catch (DataAccessException e) {
+            log.error("최근 입출고 내역 조회(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("최근 입출고 내역 조회 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("최근 입출고 내역 조회(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("최근 입출고 내역 조회 중 오류가 발생하였습니다");
+        }
     }
 
     //상품 코드 생성

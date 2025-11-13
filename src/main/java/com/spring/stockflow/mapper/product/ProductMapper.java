@@ -1,6 +1,7 @@
 package com.spring.stockflow.mapper.product;
 
 import com.spring.stockflow.domain.Product;
+import com.spring.stockflow.dto.history.InventoryHistoryDTO;
 import com.spring.stockflow.util.Pagination;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -21,4 +22,6 @@ public interface ProductMapper {
     void deleteProduct(Long id);
 
     int getTotalCount(Pagination pagination);
+
+    List<InventoryHistoryDTO> getProductHistory(Long id);
 }

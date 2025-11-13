@@ -59,6 +59,7 @@
 
                     <h4 style="margin: 30px 0 15px;">최근 입출고 내역</h4>
                     <!-- 입/출고 기능 완료 시 개발 진행 -->
+                    [[${history}]]
                     <table>
                         <thead>
                         <tr>
@@ -69,23 +70,16 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>2024-10-28 14:30</td>
-                            <td><span style="color: #3498db;">입고</span></td>
-                            <td>+100개</td>
-                            <td>홍길동</td>
+                        <tr th:if="${#lists.isEmpty(inventoryHistory)}">
+                            <td colspan="4" style="text-align: center; color: #999; padding: 20px;">
+                                최근 입출고 내역이 없습니다.
+                            </td>
                         </tr>
-                        <tr>
-                            <td>2024-10-27 10:15</td>
-                            <td><span style="color: #e74c3c;">출고</span></td>
-                            <td>-50개</td>
-                            <td>김철수</td>
-                        </tr>
-                        <tr>
-                            <td>2024-10-26 15:20</td>
-                            <td><span style="color: #3498db;">입고</span></td>
-                            <td>+200개</td>
-                            <td>이영희</td>
+                        <tr th:each="history : ${inventoryHistory}">
+                            <td th:text="${#temporals.format(history.transactionDate, 'yyyy-MM-dd')}"></td>
+                            <td><span th:style="${history.type == 'IN' ? 'color: #3498db' : 'color: #e74c3c'}" th:text="${history.type == 'IN' ? '입고' : '출고'}">입고</span></td>
+                            <td th:text="${history.quantity}"></td>
+                            <td th:text="${history.regUserName}"></td>
                         </tr>
                         </tbody>
                     </table>
