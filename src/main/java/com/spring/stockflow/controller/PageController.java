@@ -12,12 +12,6 @@ public class PageController {
         return "outbound/outbound-add";
     }
 
-    @GetMapping("/outbound/detail")
-    public String outboundDetail(Model model) {
-        model.addAttribute("menuActive", "outbound-detail");
-        return "outbound/outbound-detail";
-    }
-
     @GetMapping("/inventory")
     public String inventory(Model model) {
         model.addAttribute("menuActive", "inventory");

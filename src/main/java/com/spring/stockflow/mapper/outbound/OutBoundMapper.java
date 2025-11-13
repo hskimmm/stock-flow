@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface OutBoundMapper {
     List<OutBound> getOutBounds();
+
+    OutBound getOutBound(Long id);
 }

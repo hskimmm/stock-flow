@@ -29,4 +29,18 @@ public class OutBoundServiceImpl implements OutBoundService{
             throw new RuntimeException("출고목록 조회 중 오류가 발생하였습니다");
         }
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public OutBound getOutBound(Long id) {
+        try {
+            return outBoundMapper.getOutBound(id);
+        } catch (DataAccessException e) {
+            log.error("출고 상세 조회(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("출고 상세 조회 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("출고 상세 조회(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("출고 상세 조회 중 오류가 발생하였습니다");
+        }
+    }
 }

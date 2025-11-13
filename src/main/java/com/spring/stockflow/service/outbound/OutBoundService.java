@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface OutBoundService {
     List<OutBound> getOutBounds();
+
+    OutBound getOutBound(Long id);
 }

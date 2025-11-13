@@ -42,7 +42,7 @@
                         <td th:text="${outbound.quantity}"></td>
                         <td th:text="${outbound.reason}"></td>
                         <td th:text="${outbound.regUserName}">김철수</td>
-                        <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/outbound/detail}'|">보기</button></td>
+                        <td><button class="btn btn-primary" style="padding: 5px 10px;" th:onclick="|location.href='@{/outbound/{id}(id=${outbound.id})}'|">보기</button></td>
                     </tr>
                     </tbody>
                 </table>

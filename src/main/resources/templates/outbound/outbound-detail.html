@@ -16,49 +16,48 @@
             <div id="outbound-detail">
                 <div class="form-container">
                     <h3 style="margin-bottom: 20px; text-align: center;">출고 상세 정보</h3>
-
                     <div class="form-group">
                         <label>출고번호</label>
-                        <div class="info-text">OUT-20241028-001</div>
+                        <div class="info-text" th:text="${outBound.outBoundNo}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>출고일자</label>
-                        <div class="info-text">2024-10-28</div>
+                        <div class="info-text" th:text="${outBound.outboundDate}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>상품명</label>
-                        <div class="info-text">B제품 (PRD-002)</div>
+                        <div class="info-text" th:text="${outBound.productName}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>출고수량</label>
-                        <div class="info-text" style="background: #f8d7da; color: #721c24; font-weight: bold;">50개</div>
+                        <div class="info-text" style="background: #f8d7da; color: #721c24; font-weight: bold;" th:text="${outBound.quantity}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>출고사유</label>
-                        <div class="info-text">판매</div>
+                        <div class="info-text" th:text="${outBound.reason}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>등록자</label>
-                        <div class="info-text">김철수</div>
+                        <div class="info-text" th:text="${outBound.regUserName}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>등록일시</label>
-                        <div class="info-text">2024-10-28 13:20:15</div>
+                        <div class="info-text" th:text="${#temporals.format(outBound.regDate, 'yyyy-MM-dd')}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>비고</label>
-                        <div class="info-text">정상 출고 처리</div>
+                        <div class="info-text" th:text="${outBound.remarks}"></div>
                     </div>
 
                     <div class="form-actions">
-                        <button class="btn btn-primary" data-screen="outbound-list">확인</button>
+                        <button class="btn btn-primary btn-cancel" data-screen="outbound-list">확인</button>
                     </div>
                 </div>
             </div>
@@ -67,5 +66,19 @@
 </div>
 
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        $(".btn-cancel").on("click", function (e) {
+           e.preventDefault();
+           window.location.href = '/outbound';
+        });
+    }
+
+    //init
+    $(function () {
+       addButtonEvent();
+    });
+</script>
 </body>
 </html>

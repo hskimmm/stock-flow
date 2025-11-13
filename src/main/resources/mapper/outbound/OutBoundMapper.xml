@@ -8,4 +8,10 @@
         WHERE id > 0
         ORDER BY outbound_date DESC
     </select>
+
+    <select id="getOutBound" resultType="outbound">
+        SELECT id, outbound_no, product_id, product_name, product_code, outbound_date, quantity, reason, remarks, reg_user_id, reg_user_name, reg_date
+        FROM v_outbound_list
+        WHERE id = #{id}
+    </select>
 </mapper>
