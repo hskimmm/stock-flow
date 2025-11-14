@@ -14,6 +14,10 @@ public class Pagination {
     private String typeStr;
     private String keyword;
 
+    //카테고리, 재고 검색
+    private String category;
+    private String status;
+
     //날짜 검색
     private String startDate;
     private String endDate;

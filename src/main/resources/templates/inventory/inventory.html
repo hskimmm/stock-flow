@@ -16,21 +16,21 @@
             <div id="inventory">
                 <div class="filter-bar">
                     <select name="category">
-                        <option>카테고리: 전체</option>
-                        <option>전자</option>
-                        <option>의류</option>
-                        <option>식품</option>
-                        <option>기타</option>
+                        <option value="">카테고리: 전체</option>
+                        <option value="전자" th:attr="selected=${pagination.category == '전자'}">전자</option>
+                        <option value="의류" th:attr="selected=${pagination.category == '의류'}">의류</option>
+                        <option value="식품" th:attr="selected=${pagination.category == '식품'}">식품</option>
+                        <option value="기타" th:attr="selected=${pagination.category == '기타'}">기타</option>
                     </select>
                     <select name="status">
-                        <option>재고상태: 전체</option>
-                        <option>정상</option>
-                        <option>부족</option>
-                        <option>없음</option>
+                        <option value="">재고상태: 전체</option>
+                        <option value="정상" th:attr="selected=${pagination.status == '정상'}">정상</option>
+                        <option value="부족" th:attr="selected=${pagination.status == '부족'}">부족</option>
+                        <option value="없음" th:attr="selected=${pagination.status == '없음'}">없음</option>
                     </select>
                     <div class="search-box">
-                        <input type="text" placeholder="상품명 검색">
-                        <button class="btn btn-primary">검색</button>
+                        <input type="text" name="keyword" th:value="${pagination.keyword}" placeholder="상품명 검색">
+                        <button class="btn btn-primary btn-search">검색</button>
                     </div>
                 </div>
 
@@ -74,7 +74,10 @@
 </div>
 
 <form id="pageForm">
-    <input type="hidden" name="pageNum"/>
+    <input type="hidden" name="pageNum" th:value="${pagination.pageNum}"/>
+    <input type="hidden" name="category" th:value="${pagination.category}"/>
+    <input type="hidden" name="status" th:value="${pagination.status}"/>
+    <input type="hidden" name="keyword" th:value="${pagination.keyword}"/>
 </form>
 
 <script th:src="@{/js/app.js}"></script>
@@ -89,6 +92,25 @@
            e.preventDefault();
            let pageNum = $(this).attr('href');
            pageForm.find("input[name='pageNum']").val(pageNum);
+
+           pageForm.attr('action', '/inventory');
+           pageForm.submit();
+        });
+
+        $(".btn-search").on("click", function (e) {
+           e.preventDefault();
+           let categoryValue = $("select[name='category']").val();
+           let statusValue = $("select[name='status']").val();
+           let keywordValue = $("input[name='keyword']").val().trim();
+
+           console.log(categoryValue);
+           console.log(statusValue);
+           console.log(keywordValue);
+
+           pageForm.find("input[name='pageNum']").val(1);
+           pageForm.find("input[name='category']").val(categoryValue);
+           pageForm.find("input[name='status']").val(statusValue);
+           pageForm.find("input[name='keyword']").val(keywordValue);
 
            pageForm.attr('action', '/inventory');
            pageForm.submit();
