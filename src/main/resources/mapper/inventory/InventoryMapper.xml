@@ -4,6 +4,14 @@
 <mapper namespace="com.spring.stockflow.mapper.inventory.InventoryMapper">
     <select id="getInventories" resultType="com.spring.stockflow.dto.status.InventoryStatusDTO">
         select id, product_code, product_name, category, unit, safety_stock, current_stock, stock_status, remarks, reg_date
-        From v_inventory_status order by reg_date desc
+        From v_inventory_status
+        ORDER BY reg_date desc
+        LIMIT #{skip}, #{amount}
+    </select>
+
+    <select id="getTotalInventories" resultType="int">
+        SELECT COUNT(id)
+        FROM v_inventory_status
+        WHERE id > 0
     </select>
 </mapper>
