@@ -16,19 +16,19 @@
                 <div class="dashboard-cards">
                     <div class="card">
                         <h3>총 재고 수량</h3>
-                        <div class="value">1,250개</div>
+                        <div class="value" style="cursor: pointer;" th:text="${totalStock}  + 개" th:onclick="|location.href='@{/inventory}'|"></div>
                     </div>
                     <div class="card success">
                         <h3>오늘 입고</h3>
-                        <div class="value">15건</div>
+                        <div class="value" style="cursor: pointer;" th:text="${todayInboundQty} + 건" th:onclick="|location.href='@{/inbound}'|"></div>
                     </div>
                     <div class="card info">
                         <h3>오늘 출고</h3>
-                        <div class="value">8건</div>
+                        <div class="value" style="cursor: pointer;" th:text="${todayOutboundQty} + 건" th:onclick="|location.href='@{/outbound}'|"></div>
                     </div>
                     <div class="card warning">
                         <h3>재고 부족 상품</h3>
-                        <div class="value">3개 ⚠️</div>
+                        <div class="value" style="cursor: pointer;" th:text="${stockShortageCount} + 개" th:onclick="|location.href='@{/inventory}'|"></div>
                     </div>
                 </div>
 
@@ -44,40 +44,12 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>2024-10-28 14:30</td>
-                        <td><span style="color: #3498db;">입고</span></td>
-                        <td>A제품</td>
-                        <td>100개</td>
-                        <td>홍길동</td>
-                    </tr>
-                    <tr>
-                        <td>2024-10-28 13:20</td>
-                        <td><span style="color: #e74c3c;">출고</span></td>
-                        <td>B제품</td>
-                        <td>50개</td>
-                        <td>김철수</td>
-                    </tr>
-                    <tr>
-                        <td>2024-10-28 11:00</td>
-                        <td><span style="color: #3498db;">입고</span></td>
-                        <td>C제품</td>
-                        <td>200개</td>
-                        <td>이영희</td>
-                    </tr>
-                    <tr>
-                        <td>2024-10-27 16:45</td>
-                        <td><span style="color: #e74c3c;">출고</span></td>
-                        <td>D제품</td>
-                        <td>30개</td>
-                        <td>박민수</td>
-                    </tr>
-                    <tr>
-                        <td>2024-10-27 15:30</td>
-                        <td><span style="color: #3498db;">입고</span></td>
-                        <td>E제품</td>
-                        <td>150개</td>
-                        <td>홍길동</td>
+                    <tr style="cursor: pointer;" th:each="list : ${recentStockHistoryList}"  th:onclick="${list.type == 'IN'} ? 'location.href=\'/inbound/' + ${list.id} + '\'' :'location.href=\'/outbound/' + ${list.id} + '\''">
+                        <td th:text="${#temporals.format(list.transactionDate, 'yyyy-MM-dd')}"></td>
+                        <td><span th:style="${list.type == 'IN' ? 'color: #3498db;' : 'color: #e74c3c;'}" th:text="${list.type == 'IN' ? '입고' : '출고'}"></span></td>
+                        <td th:text="${list.productName}"></td>
+                        <td th:text="${list.quantity} + 개"></td>
+                        <td th:text="${list.regUserName}"></td>
                     </tr>
                     </tbody>
                 </table>
