@@ -1,0 +1,24 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.stockflow.mapper.dashboard.DashboardMapper">
+    <select id="getTotalStock" resultType="int">
+        SELECT SUM(current_stock) AS totalStock FROM v_inventory_status
+    </select>
+
+    <select id="getTodayInboundQty" resultType="int">
+        SELECT COUNT(*) FROM inbound WHERE inbound_Date = curdate()
+    </select>
+
+    <select id="getTodayOutboundQty" resultType="int">
+        SELECT COUNT(*) FROM outbound WHERE outbound_Date = curdate()
+    </select>
+
+    <select id="getStockShortageCount" resultType="int">
+        SELECT COUNT(*) FROM v_inventory_status WHERE stock_status IN ('부족', '없음')
+    </select>
+
+    <select id="getRecentStockHistoryList" resultType="com.spring.stockflow.dto.history.InventoryHistoryDTO">
+        SELECT * FROM v_inventory_history ORDER BY transaction_date DESC LIMIT 5
+    </select>
+</mapper>
