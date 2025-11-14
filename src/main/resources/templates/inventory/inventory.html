@@ -45,37 +45,13 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>A제품</td>
-                        <td>전자</td>
-                        <td>150개</td>
-                        <td>50개</td>
-                        <td class="status-normal">정상</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>B제품</td>
-                        <td>의류</td>
-                        <td>30개</td>
-                        <td>50개</td>
-                        <td class="status-warning">⚠️ 부족</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>C제품</td>
-                        <td>식품</td>
-                        <td>0개</td>
-                        <td>20개</td>
-                        <td class="status-danger">🔴 없음</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>D제품</td>
-                        <td>전자</td>
-                        <td>200개</td>
-                        <td>100개</td>
-                        <td class="status-normal">정상</td>
+                    <tr th:each="status : ${inventories}">
+                        <td th:text="${status.id}"></td>
+                        <td th:text="${status.productName}"></td>
+                        <td th:text="${status.category}"></td>
+                        <td th:text="${status.currentStock}"></td>
+                        <td th:text="${status.safetyStock}"></td>
+                        <td th:text="${status.stockStatus}" th:class="${status.stockStatus == '정상' ? 'status-normal' : (status.stockStatus == '부족' ? 'status-warning' : 'status-danger')}">정상</td>
                     </tr>
                     </tbody>
                 </table>
