@@ -335,13 +335,25 @@ tr:hover {
     padding: 30px;
     border-radius: 8px;
     margin-bottom: 20px;
-    text-align: center;
+    text-align: left;
     min-height: 250px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #7f8c8d;
     flex-direction: column;
+}
+
+.chart-container.pie-chart {
+    display: block;
+    background: white;
+    min-height: 450px;
+    height: auto;
+}
+.chart-wrapper {
+    position: relative;
+    height: 400px;
+    width: 100%;
 }
 
 .stats-grid {
