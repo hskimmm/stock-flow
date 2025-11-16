@@ -30,6 +30,7 @@
         SELECT *
         FROM v_notice_list
         ORDER BY is_top DESC, reg_date DESC
+        LIMIT #{skip}, #{amount}
     </select>
 
     <select id="getNotice" resultMap="noticeDetailMap">
@@ -98,4 +99,8 @@
         del_yn = 'Y'
         WHERE id = #{id}
     </update>
+
+    <select id="getTotalNotice" resultType="int">
+        SELECT COUNT(*) FROM notice WHERE del_yn = 'N'
+    </select>
 </mapper>

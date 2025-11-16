@@ -14,7 +14,7 @@
         <div class="content">
             <div id="notice-list">
                 <div class="table-header">
-                    <button class="btn btn-primary" th:onclick="|location.href='@{/notice/add}'|">+ 공지사항 작성</button>
+                    <button class="btn btn-primary" th:onclick="|location.href='@{/notice/add(pageNum=${page.pagination.pageNum})}'|">+ 공지사항 작성</button>
                     <div class="search-box">
                         <input type="text" placeholder="제목 또는 내용 검색">
                         <button class="btn btn-primary">검색</button>
@@ -36,7 +36,7 @@
                         <tr th:each="list : ${noticeList}">
                             <td th:text="${list.id}"></td>
                             <td><span th:style="${list.noticeType == 'IMPORTANT' ? 'color: #e74c3c; font-weight: bold;' : 'color: #3498db;'}" th:text="${list.noticeType == 'IMPORTANT' ? '중요' : '일반'}"></span></td>
-                            <td th:style="${list.noticeType == 'IMPORTANT' ? 'text-align: left; cursor: pointer; font-weight: bold;' : 'text-align: left; cursor: pointer;'}" th:text="${list.title}" th:onclick="|location.href='@{/notice/{id}(id=${list.id})}'|"></td>
+                            <td th:style="${list.noticeType == 'IMPORTANT' ? 'text-align: left; cursor: pointer; font-weight: bold;' : 'text-align: left; cursor: pointer;'}" th:text="${list.title}" th:onclick="|location.href='@{/notice/{id}(id=${list.id}, pageNum=${page.pagination.pageNum})}'|"></td>
                             <td th:text="${list.regUserName}"></td>
                             <td th:text="${#temporals.format(list.regDate, 'yyyy-MM-dd')}"></td>
                             <td th:text="${list.viewCount}"></td>
@@ -45,13 +45,13 @@
                 </table>
                 <!-- 페이징 -->
                 <div class="pagination">
-                    <div class="page-item">
+                    <div class="page-item" th:if="${page.prev}">
                         <a>Previous</a>
                     </div>
-                    <div class="page-item">
-                        <a class="active">1</a>
+                    <div class="page-item" th:each="num : ${#numbers.sequence(page.startPage, page.endPage)}">
+                        <a th:class="${page.pagination.pageNum == num} ? 'active' : ''" th:href="${num}">[[${num}]]</a>
                     </div>
-                    <div class="page-item">
+                    <div class="page-item" th:if="${page.next}">
                         <a>Next</a>
                     </div>
                 </div>
@@ -60,6 +60,32 @@
     </div>
 </div>
 
+<form id="pageForm">
+    <input type="hidden" name="pageNum"/>
+</form>
+
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+
+    const pageUL = $(".pagination");
+    const pageForm = $("#pageForm");
+
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        pageUL.on("click", "a", function (e) {
+           e.preventDefault();
+           let pageNum = $(this).attr('href');
+           $("input[name='pageNum']").val(pageNum);
+
+           pageForm.attr('action', '/notice');
+           pageForm.submit();
+        });
+    }
+
+    //init
+    $(function () {
+       addButtonEvent();
+    });
+</script>
 </body>
 </html>

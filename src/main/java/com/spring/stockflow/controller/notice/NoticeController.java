@@ -2,12 +2,14 @@ package com.spring.stockflow.controller.notice;
 
 import com.spring.stockflow.domain.File;
 import com.spring.stockflow.domain.Notice;
+import com.spring.stockflow.dto.PageDTO;
 import com.spring.stockflow.dto.UserDTO;
 import com.spring.stockflow.dto.notice.CreateNoticeDTO;
 import com.spring.stockflow.dto.notice.EditNoticeDTO;
 import com.spring.stockflow.mapper.file.FileMapper;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.service.notice.NoticeService;
+import com.spring.stockflow.util.Pagination;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -42,15 +44,20 @@ public class NoticeController {
     private String uploadPath;
 
     @GetMapping
-    public String getNotices(Model model) {
-        List<Notice> noticeList = noticeService.getNotices();
+    public String getNotices(@ModelAttribute(value = "pagination") Pagination pagination, Model model) {
+        List<Notice> noticeList = noticeService.getNotices(pagination);
+        PageDTO pageDTO = new PageDTO(pagination, noticeService.getTotalNotice(pagination));
+
         model.addAttribute("noticeList", noticeList);
+        model.addAttribute("page", pageDTO);
         model.addAttribute("menuActive", "notice");
         return "notice/notice-list";
     }
 
     @GetMapping("/{id}")
-    public String getNotice(@PathVariable(value = "id") Long id, Model model) {
+    public String getNotice(@PathVariable(value = "id") Long id,
+                            @ModelAttribute(value = "pagination") Pagination pagination,
+                            Model model) {
         Notice notice = noticeService.getNotice(id);
         model.addAttribute("notice", notice);
         model.addAttribute("menuActive", "notice");
@@ -58,7 +65,9 @@ public class NoticeController {
     }
 
     @GetMapping("/add")
-    public String addNoticeForm(@AuthenticationPrincipal UserDTO userDTO, Model model) {
+    public String addNoticeForm(@AuthenticationPrincipal UserDTO userDTO,
+                                @ModelAttribute(value = "pagination") Pagination pagination,
+                                Model model) {
         model.addAttribute("userId", userDTO.getId());
         model.addAttribute("menuActive", "notice");
         return "notice/notice-add";
@@ -71,7 +80,9 @@ public class NoticeController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editNoticeForm(@PathVariable(value = "id") Long id, Model model) {
+    public String editNoticeForm(@PathVariable(value = "id") Long id,
+                                 @ModelAttribute(value = "pagination") Pagination pagination,
+                                 Model model) {
         Notice notice = noticeService.getNoticeDetail(id);
         model.addAttribute("notice", notice);
         model.addAttribute("menuActive", "notice");

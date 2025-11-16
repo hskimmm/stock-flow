@@ -8,6 +8,7 @@ import com.spring.stockflow.mapper.file.FileMapper;
 import com.spring.stockflow.mapper.notice.NoticeMapper;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.util.FileUploadHandler;
+import com.spring.stockflow.util.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataAccessException;
@@ -29,8 +30,8 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Notice> getNotices() {
-        return noticeMapper.getNotices();
+    public List<Notice> getNotices(Pagination pagination) {
+        return noticeMapper.getNotices(pagination);
     }
 
     @Transactional
@@ -159,5 +160,11 @@ public class NoticeServiceImpl implements NoticeService {
             log.error("공지사항 삭제(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("공지사항 삭제 중 오류가 발생하였습니다");
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getTotalNotice(Pagination pagination) {
+        return noticeMapper.getTotalNotice(pagination);
     }
 }
