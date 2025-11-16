@@ -25,10 +25,21 @@
             <result property="fileExt" column="file_ext"/>
         </collection>
     </resultMap>
-    
+
+    <sql id="search">
+        <if test="keyword != null and keyword != ''">
+            AND (
+                title LIKE CONCAT('%', #{keyword}, '%')
+                OR content LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+    </sql>
+
     <select id="getNotices" resultType="notice">
         SELECT *
         FROM v_notice_list
+        WHERE id > 0
+        <include refid="search"/>
         ORDER BY is_top DESC, reg_date DESC
         LIMIT #{skip}, #{amount}
     </select>
@@ -101,6 +112,9 @@
     </update>
 
     <select id="getTotalNotice" resultType="int">
-        SELECT COUNT(*) FROM notice WHERE del_yn = 'N'
+        SELECT COUNT(*)
+        FROM notice
+        WHERE del_yn = 'N'
+        <include refid="search"/>
     </select>
 </mapper>
