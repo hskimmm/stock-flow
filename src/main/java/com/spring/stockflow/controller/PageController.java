@@ -6,12 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class PageController {
-    @GetMapping("/statistics")
-    public String statistics(Model model) {
-        model.addAttribute("menuActive", "statistics");
-        return "statistics/statistics";
-    }
-
     @GetMapping("/notice/list")
     public String noticeList(Model model) {
         model.addAttribute("menuActive", "notice");

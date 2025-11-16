@@ -1,0 +1,81 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.stockflow.mapper.statistics.StatisticsMapper">
+    <select id="getTopInProductList" resultType="com.spring.stockflow.dto.statistics.TopInProductDTO">
+        SELECT p.product_name, p.unit, SUM(i.quantity) AS total_quantity
+        FROM inbound i
+        INNER JOIN product p
+        ON i.product_id = p.id
+        WHERE YEAR(i.inbound_date) = YEAR(CURDATE())
+        AND MONTH(i.inbound_date) = MONTH(CURDATE())
+        GROUP BY p.id, p.product_name
+        ORDER BY total_quantity DESC
+        LIMIT 5
+    </select>
+
+    <select id="getTopOutProductList" resultType="com.spring.stockflow.dto.statistics.TopOutProductDTO">
+        SELECT p.product_name, p.unit, SUM(o.quantity) AS total_quantity
+        FROM outbound o
+        INNER JOIN product p
+        ON o.product_id = p.id
+        WHERE YEAR(o.outbound_date) = YEAR(CURDATE())
+        AND MONTH(o.outbound_date) = MONTH(CURDATE())
+        GROUP BY p.id, p.product_name
+        ORDER BY total_quantity DESC
+        LIMIT 5
+    </select>
+
+    <select id="getCategoryStockList" resultType="com.spring.stockflow.dto.statistics.CategoryStockDTO">
+        SELECT category, SUM(current_stock) AS total_stock
+        FROM product
+        WHERE del_yn = 'N'
+        GROUP BY category
+        ORDER BY total_stock DESC
+    </select>
+
+    <select id="getTodayInOutData" resultType="com.spring.stockflow.dto.statistics.InOutboundStatDTO">
+        SELECT
+        DATE_FORMAT(transaction_date, '%Y-%m-%d %H:00') AS date_label,
+        SUM(CASE WHEN type = 'IN' THEN quantity ELSE 0 END) AS inbound_quantity,
+        SUM(CASE WHEN type = 'OUT' THEN quantity ELSE 0 END) AS outbound_quantity
+        FROM v_inventory_history
+        WHERE DATE(transaction_date) = CURDATE()
+        GROUP BY date_label
+        ORDER BY date_label
+    </select>
+
+    <select id="getWeekInOutData" resultType="com.spring.stockflow.dto.statistics.InOutboundStatDTO">
+        SELECT
+        DATE_FORMAT(transaction_date, '%Y-%m-%d') AS date_label,
+        SUM(CASE WHEN type = 'IN' THEN quantity ELSE 0 END) AS inbound_quantity,
+        SUM(CASE WHEN type = 'OUT' THEN quantity ELSE 0 END) AS outbound_quantity
+        FROM v_inventory_history
+        WHERE YEARWEEK(transaction_date, 1) = YEARWEEK(CURDATE(), 1)
+        GROUP BY date_label
+        ORDER BY date_label
+    </select>
+
+    <select id="getMonthInOutData" resultType="com.spring.stockflow.dto.statistics.InOutboundStatDTO">
+        SELECT
+        DATE_FORMAT(transaction_date, '%Y-%m-%d') AS date_label,
+        SUM(CASE WHEN type = 'IN' THEN quantity ELSE 0 END) AS inbound_quantity,
+        SUM(CASE WHEN type = 'OUT' THEN quantity ELSE 0 END) AS outbound_quantity
+        FROM v_inventory_history
+        WHERE YEAR(transaction_date) = YEAR(CURDATE())
+        AND MONTH(transaction_date) = MONTH(CURDATE())
+        GROUP BY date_label
+        ORDER BY date_label
+    </select>
+
+    <select id="getCustomInOutData" resultType="com.spring.stockflow.dto.statistics.InOutboundStatDTO">
+        SELECT
+        DATE_FORMAT(transaction_date, '%Y-%m-%d') AS date_label,
+        SUM(CASE WHEN type = 'IN' THEN quantity ELSE 0 END) AS inbound_quantity,
+        SUM(CASE WHEN type = 'OUT' THEN quantity ELSE 0 END) AS outbound_quantity
+        FROM v_inventory_history
+        WHERE DATE_FORMAT(transaction_date, '%Y-%m') = #{month}
+        GROUP BY date_label
+        ORDER BY date_label
+    </select>
+</mapper>

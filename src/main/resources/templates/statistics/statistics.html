@@ -5,6 +5,15 @@
     <title>상품 목록</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        .chart-container.line-chart {
+            display: block;
+            background: white;
+            min-height: 450px;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -15,72 +24,43 @@
             <!-- 통계 화면 -->
             <div id="statistics">
                 <div class="filter-bar">
-                    <select>
-                        <option>기간: 이번달</option>
-                        <option>오늘</option>
-                        <option>이번주</option>
-                        <option>이번달</option>
-                        <option>직접선택</option>
+                    <select id="periodSelect" name="period">
+                        <option value="today">오늘</option>
+                        <option value="week">이번주</option>
+                        <option value="month" selected>이번달</option>
+                        <option value="custom">직접선택</option>
                     </select>
-                    <input type="month" value="2024-10">
+                    <input type="month" style="display:none;" id="customMonth" name="customMonth">
                 </div>
 
-                <div class="chart-container">
-                    📊 일별 입출고 현황 차트<br>
-                    <small>(실제 구현 시 Chart.js 등 사용)</small>
+                <div class="chart-container line-chart">
+                    📊 기간별 입출고 현황<br>
+                    <div class="chart-wrapper">
+                        <canvas id="inOutboundLineChart"></canvas>
+                    </div>
                 </div>
 
-                <div class="chart-container">
-                    📈 카테고리별 재고 현황 차트<br>
-                    <small>(실제 구현 시 파이 차트)</small>
+                <div class="chart-container pie-chart">
+                    📈 카테고리별 재고 현황<br>
+                    <div class="chart-wrapper">
+                        <canvas id="categoryStockPieChart"></canvas>
+                    </div>
                 </div>
 
                 <div class="stats-grid">
                     <div class="stat-box">
                         <h4>📋 많이 입고된 상품 TOP 5</h4>
-                        <div class="stat-item">
-                            <span>A제품</span>
-                            <span>500개</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>C제품</span>
-                            <span>400개</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>E제품</span>
-                            <span>350개</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>D제품</span>
-                            <span>300개</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>B제품</span>
-                            <span>250개</span>
+                        <div class="stat-item" th:each="list : ${topInProductDTOList}">
+                            <span th:text="${list.productName}"></span>
+                            <span th:text="${list.totalQuantity + list.unit}"></span>
                         </div>
                     </div>
 
                     <div class="stat-box">
                         <h4>📋 많이 출고된 상품 TOP 5</h4>
-                        <div class="stat-item">
-                            <span>B제품</span>
-                            <span>300개</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>D제품</span>
-                            <span>250개</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>A제품</span>
-                            <span>200개</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>E제품</span>
-                            <span>150개</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>C제품</span>
-                            <span>100개</span>
+                        <div class="stat-item" th:each="list : ${topOutProductDTOList}">
+                            <span th:text="${list.productName}"></span>
+                            <span th:text="${list.totalQuantity + list.unit}"></span>
                         </div>
                     </div>
                 </div>
@@ -90,5 +70,353 @@
 </div>
 
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+
+    let categoryStockChart = null;
+    let inOutboundBarChart = null;
+
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        $("#periodSelect").on("change", function () {
+            const period = $(this).val();
+            if (period === 'custom') {
+                $("#customMonth").show();
+            } else {
+                $("#customMonth").hide();
+                loadInOutChart(period);
+            }
+        });
+
+        $("#customMonth").on("change", function () {
+           const month = $(this).val();
+           if (month) {
+               loadInOutChart('custom', month);
+           }
+        });
+    }
+
+    //기간별 입출고 차트 공통함수
+    function loadInOutChart(period, month = null) {
+        let url = '/statistics/daily-in-out?period=' + period;
+
+        if (period === 'custom' && month) {
+            url += '&month=' + month;
+        }
+
+        $.ajax({
+           url: url,
+           method: 'GET',
+           success: function (response) {
+               if (response.success) {
+                   renderChart(response.data);
+               }
+           },
+           error: function (xhr, status, error) {
+               let response;
+               try {
+                   response = JSON.parse(xhr.responseText);
+               } catch (e) {
+                   alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                   return e;
+               }
+
+               let errorMessage = response.message;
+               if (xhr.status === 500) {
+                   alert(errorMessage);
+               }
+           }
+        });
+    }
+
+    //기간별 입출고 현황 차트 생성
+    function renderChart(data, period) {
+        const ctx = document.getElementById('inOutboundLineChart').getContext('2d');
+
+        // 기존 차트가 있으면 삭제
+        if (inOutboundBarChart) {
+            inOutboundBarChart.destroy();
+        }
+
+        // 데이터 추출
+        const labels = data.map(item => {
+            const date = new Date(item.dateLabel);
+
+            if (period === 'today') {
+                return item.dateLabel.split(' ')[1];
+            } else if (period === 'week') {
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+                return `${month}/${day} (${weekday})`;
+            } else {
+                return date.getDate() + '일';
+            }
+        });
+
+        const inboundData = data.map(item => item.inboundQuantity || 0);
+        const outboundData = data.map(item => item.outboundQuantity || 0);
+
+        // 바 차트 생성
+        inOutboundBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '입고',
+                        data: inboundData,
+                        backgroundColor: '#36A2EB',
+                        borderColor: '#36A2EB',
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        barThickness: 25
+                    },
+                    {
+                        label: '출고',
+                        data: outboundData,
+                        backgroundColor: '#FF6384',
+                        borderColor: '#FF6384',
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        barThickness: 25
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            usePointStyle: true,
+                            pointStyle: 'rect'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.dataset.label || '';
+                                const value = context.parsed.y || 0;
+                                return `${label}: ${value.toLocaleString()}개`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 12
+                            },
+                            maxRotation: 45,
+                            minRotation: 0
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            font: {
+                                size: 12
+                            },
+                            callback: function(value) {
+                                return value.toLocaleString() + '개';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    //재고 현황 데이터 가져오기
+    function getCategoryStockData() {
+        $.ajax({
+            url: '/statistics/category-stock',
+            method: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    if (response.data && response.data.length > 0) {
+                        createCategoryStockPieChart(response.data);
+                    } else {
+
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                let response;
+                try {
+                    response = JSON.parse(xhr.responseText);
+                } catch (e) {
+                    alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                    return e;
+                }
+
+                let errorMessage = response.message;
+                if (xhr.status === 500) {
+                    alert(errorMessage);
+                }
+            }
+        });
+    }
+
+    //파이 차트 생성 함수
+    function createCategoryStockPieChart(data) {
+        const ctx = document.getElementById('categoryStockPieChart').getContext('2d');
+
+        // 기존 차트가 있으면 삭제
+        if (categoryStockChart) {
+            categoryStockChart.destroy();
+        }
+
+        // 카테고리와 재고 데이터 추출
+        const categories = data.map(item => item.category);
+        const stocks = data.map(item => item.totalStock);
+
+        // 차트 색상 배열
+        const colors = [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#4BC0C0',
+            '#9966FF',
+            '#FF9F40',
+            '#FF6384',
+            '#C9CBCF',
+            '#E7E9ED',
+            '#8E5EA2'
+        ];
+
+        //파이 차트 위에 라벨 표시
+        const datalabelsPlugin = {
+            id: 'datalabels',
+            afterDatasetsDraw(chart) {
+                const { ctx, data } = chart;
+                const meta = chart.getDatasetMeta(0);
+
+                meta.data.forEach((element, index) => {
+                    const { x, y } = element.tooltipPosition();
+                    const label = data.labels[index];
+                    const value = data.datasets[0].data[index];
+                    const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                    const percentage = ((value / total) * 100).toFixed(1);
+
+                    // 텍스트 스타일 설정
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+
+                    // 그림자 효과
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                    ctx.shadowBlur = 3;
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 1;
+
+                    // 카테고리명 표시
+                    ctx.fillText(label, x, y - 8);
+
+                    // 비율 표시
+                    ctx.font = 'bold 12px Arial';
+                    ctx.fillText(`${percentage}%`, x, y + 8);
+
+                    // 그림자 초기화
+                    ctx.shadowColor = 'transparent';
+                    ctx.shadowBlur = 0;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                });
+            }
+        };
+
+        //파이 차트 생성
+        categoryStockChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: categories,
+                datasets: [{
+                    label: '재고 수량',
+                    data: stocks,
+                    backgroundColor: colors.slice(0, categories.length),
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 15,
+                            font: {
+                                size: 13
+                            },
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                if (data.labels && data.labels.length && data.datasets && data.datasets.length) {
+                                    return data.labels.map((label, i) => {
+                                        const value = data.datasets[0].data[i] || 0;
+                                        return {
+                                            text: `${label}: ${value.toLocaleString()}개`,
+                                            fillStyle: data.datasets[0].backgroundColor[i],
+                                            hidden: false,
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${value.toLocaleString()}개 (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            },
+            plugins: [datalabelsPlugin]
+        });
+    }
+
+    //init
+    $(function () {
+       addButtonEvent();
+       getCategoryStockData();
+       loadInOutChart('month');
+    });
+</script>
 </body>
 </html>
