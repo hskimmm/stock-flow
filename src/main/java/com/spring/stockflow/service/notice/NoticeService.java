@@ -19,4 +19,6 @@ public interface NoticeService {
     Notice getNoticeDetail(Long id);
 
     ApiResponse<?> editNotice(@Valid EditNoticeDTO editNoticeDTO, List<MultipartFile> files, String[] deletedFileIds);
+
+    ApiResponse<?> deleteNotice(Long id);
 }

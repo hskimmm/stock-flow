@@ -1,5 +1,6 @@
 package com.spring.stockflow.service.notice;
 
+import com.spring.stockflow.domain.File;
 import com.spring.stockflow.domain.Notice;
 import com.spring.stockflow.dto.notice.CreateNoticeDTO;
 import com.spring.stockflow.dto.notice.EditNoticeDTO;
@@ -128,6 +129,35 @@ public class NoticeServiceImpl implements NoticeService {
         } catch (Exception e) {
             log.error("공지사항 수정(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("공지사항 수정 중 오류가 발생하였습니다");
+        }
+    }
+
+    @Transactional
+    @Override
+    public ApiResponse<?> deleteNotice(Long id) {
+        try {
+            if (id == null) {
+                throw new RuntimeException("공지사항이 존재하지 않습니다");
+            }
+
+            //파일 조회
+            List<File> fileList = fileMapper.getFileList(id);
+            if (fileList != null && !fileList.isEmpty()) {
+                for (File file : fileList) {
+                    fileUploadHandler.deleteFile(file);
+                }
+            }
+
+            //공지사항 삭제
+            noticeMapper.deleteNotice(id);
+
+            return new ApiResponse<>(true, "공지사항을 삭제하였습니다");
+        } catch (DataAccessException e) {
+            log.error("공지사항 삭제(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("공지사항 삭제 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("공지사항 삭제(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("공지사항 삭제 중 오류가 발생하였습니다");
         }
     }
 }

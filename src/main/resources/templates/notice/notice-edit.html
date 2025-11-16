@@ -195,7 +195,35 @@
                }
            },
            error: function (xhr, status, error) {
-               alert("실패");
+               let response;
+               try {
+                   response = JSON.parse(xhr.responseText);
+               } catch (e) {
+                   alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                   return e;
+               }
+
+               let errorMessage = response.message;
+               if (xhr.status === 400) {
+                   let errors = response.items;
+                   if (errors['id']) {
+                       alert(errors['id']);
+                       return false;
+                   } else if (errors['noticeType']) {
+                       alert(errors['noticeType']);
+                       return false;
+                   } else if (errors['title']) {
+                       alert(errors['title']);
+                       $("#title").focus();
+                       return false;
+                   } else if (errors['content']) {
+                       alert(errors['content']);
+                       $("#content").focus();
+                       return false;
+                   }
+               } else if (xhr.status === 500) {
+                   alert(errorMessage);
+               }
            }
         });
     }

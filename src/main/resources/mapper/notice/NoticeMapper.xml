@@ -92,4 +92,10 @@
         is_top = #{isTop}
         WHERE id = #{id}
     </update>
+    
+    <update id="deleteNotice">
+        UPDATE notice SET
+        del_yn = 'Y'
+        WHERE id = #{id}
+    </update>
 </mapper>

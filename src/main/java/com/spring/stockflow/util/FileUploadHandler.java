@@ -123,4 +123,33 @@ public class FileUploadHandler {
         Path path = Paths.get(fullPath, savedName);
         file.transferTo(path);
     }
+
+    /**
+     * 단일 파일 삭제 (물리 파일 삭제 + DB 삭제)
+     */
+    public void deleteFile(File fileVO) {
+        if (fileVO == null) return;
+
+        // 실제 파일 경로 생성
+        String fullPath = uploadPath + java.io.File.separator
+                + fileVO.getFilePath() + java.io.File.separator
+                + fileVO.getSavedName();
+
+        java.io.File physicalFile = new java.io.File(fullPath);
+
+        // 실제 파일 삭제
+        if (physicalFile.exists()) {
+            boolean deleted = physicalFile.delete();
+            if (!deleted) {
+                log.warn("파일 삭제 실패: {}", fullPath);
+            } else {
+                log.info("파일 삭제 성공: {}", fullPath);
+            }
+        } else {
+            log.warn("파일 존재하지 않음: {}", fullPath);
+        }
+
+        // DB 삭제
+        fileMapper.deleteFile(fileVO.getId());
+    }
 }
