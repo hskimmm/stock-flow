@@ -36,7 +36,7 @@
                         <tr th:each="list : ${noticeList}">
                             <td th:text="${list.id}"></td>
                             <td><span th:style="${list.noticeType == 'IMPORTANT' ? 'color: #e74c3c; font-weight: bold;' : 'color: #3498db;'}" th:text="${list.noticeType == 'IMPORTANT' ? '중요' : '일반'}"></span></td>
-                            <td th:style="${list.noticeType == 'IMPORTANT' ? 'text-align: left; cursor: pointer; font-weight: bold;' : 'text-align: left; cursor: pointer;'}" th:text="${list.title}" th:onclick="|location.href='@{/notice/detail}'|"></td>
+                            <td th:style="${list.noticeType == 'IMPORTANT' ? 'text-align: left; cursor: pointer; font-weight: bold;' : 'text-align: left; cursor: pointer;'}" th:text="${list.title}" th:onclick="|location.href='@{/notice/{id}(id=${list.id})}'|"></td>
                             <td th:text="${list.regUserName}"></td>
                             <td th:text="${#temporals.format(list.regDate, 'yyyy-MM-dd')}"></td>
                             <td th:text="${list.viewCount}"></td>

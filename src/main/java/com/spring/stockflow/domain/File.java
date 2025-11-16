@@ -24,4 +24,14 @@ public class File {
     private Integer downloadCount; //다운로드 횟수
     private Integer displayOrder; //표시 순서
     private LocalDateTime regDate; //등록일
+
+    public String getFormattedFileSize() {
+        if (fileSize == null) return "0 B";
+
+        long size = fileSize;
+        if (size < 1024) return size + " B";
+        if (size < 1024 * 1024) return String.format("%.2f KB", size / 1024.0);
+        if (size < 1024 * 1024 * 1024) return String.format("%.2f MB", size / (1024.0 * 1024));
+        return String.format("%.2f GB", size / (1024.0 * 1024 * 1024));
+    }
 }

@@ -8,4 +8,8 @@ import java.util.List;
 @Mapper
 public interface NoticeMapper {
     List<Notice> getNotices();
+
+    Notice getNotice(Long id);
+
+    void increaseViewCount(Long id);
 }

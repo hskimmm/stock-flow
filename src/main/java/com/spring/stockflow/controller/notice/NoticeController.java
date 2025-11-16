@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -25,5 +26,13 @@ public class NoticeController {
         model.addAttribute("noticeList", noticeList);
         model.addAttribute("menuActive", "notice");
         return "notice/notice-list";
+    }
+
+    @GetMapping("/{id}")
+    public String getNotice(@PathVariable(value = "id") Long id, Model model) {
+        Notice notice = noticeService.getNotice(id);
+        model.addAttribute("notice", notice);
+        model.addAttribute("menuActive", "notice");
+        return "notice/notice-detail";
     }
 }

@@ -2,9 +2,66 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.stockflow.mapper.notice.NoticeMapper">
+    <resultMap id="noticeDetailMap" type="com.spring.stockflow.domain.Notice">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="noticeType" column="notice_type"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="isTop" column="is_top"/>
+        <result property="regUserId" column="reg_user_id"/>
+        <result property="regUserName" column="reg_user_name"/>
+        <result property="regDate" column="reg_date"/>
+        <result property="modDate" column="mod_date"/>
+        <result property="delYn" column="del_yn"/>
+        
+        <collection property="fileList" ofType="com.spring.stockflow.domain.File">
+            <id property="id" column="file_id"/>
+            <result property="fileType" column="file_type"/>
+            <result property="originalName" column="original_name"/>
+            <result property="savedName" column="saved_name"/>
+            <result property="filePath" column="file_path"/>
+            <result property="fileSize" column="file_size"/>
+            <result property="fileExt" column="file_ext"/>
+        </collection>
+    </resultMap>
+    
     <select id="getNotices" resultType="notice">
         SELECT *
         FROM v_notice_list
         ORDER BY is_top DESC, reg_date DESC
     </select>
+
+    <select id="getNotice" resultMap="noticeDetailMap">
+        SELECT
+            n.id,
+            n.title,
+            n.content,
+            n.notice_type,
+            n.view_count,
+            n.is_top,
+            n.reg_date,
+            n.mod_date,
+            n.del_yn,
+            u.id AS reg_user_id,
+            u.user_name AS reg_user_name,
+            f.id AS file_id,
+            f.file_type,
+            f.original_name,
+            f.saved_name,
+            f.file_path,
+            f.file_size,
+            f.file_ext
+        FROM notice n
+        INNER JOIN user u ON n.reg_user_id = u.id
+        LEFT JOIN file f ON n.id = f.ref_id AND f.ref_type = 'NOTICE'
+        WHERE n.id = #{id}
+        AND n.del_yn = 'N'
+    </select>
+
+    <update id="increaseViewCount">
+        UPDATE notice SET
+        view_count = view_count + 1
+        WHERE id = #{id}
+    </update>
 </mapper>

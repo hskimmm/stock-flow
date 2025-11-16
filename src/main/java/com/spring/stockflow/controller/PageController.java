@@ -12,12 +12,6 @@ public class PageController {
         return "notice/notice-add";
     }
 
-    @GetMapping("/notice/detail")
-    public String noticeDetail(Model model) {
-        model.addAttribute("menuActive", "notice");
-        return "notice/notice-detail";
-    }
-
     @GetMapping("/notice/edit")
     public String noticeEdit(Model model) {
         model.addAttribute("menuActive", "notice");
