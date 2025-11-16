@@ -14,4 +14,6 @@ public interface NoticeMapper {
     void increaseViewCount(Long id);
 
     void addNotice(Notice notice);
+
+    void editNotice(Notice notice);
 }

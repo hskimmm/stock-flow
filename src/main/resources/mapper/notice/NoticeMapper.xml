@@ -83,4 +83,13 @@
             #{regUserId}
         )
     </insert>
+
+    <update id="editNotice">
+        UPDATE notice SET
+        notice_type = #{noticeType},
+        title = #{title},
+        content = #{content},
+        is_top = #{isTop}
+        WHERE id = #{id}
+    </update>
 </mapper>

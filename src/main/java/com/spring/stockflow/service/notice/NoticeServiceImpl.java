@@ -2,6 +2,8 @@ package com.spring.stockflow.service.notice;
 
 import com.spring.stockflow.domain.Notice;
 import com.spring.stockflow.dto.notice.CreateNoticeDTO;
+import com.spring.stockflow.dto.notice.EditNoticeDTO;
+import com.spring.stockflow.mapper.file.FileMapper;
 import com.spring.stockflow.mapper.notice.NoticeMapper;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.util.FileUploadHandler;
@@ -22,6 +24,7 @@ import java.util.NoSuchElementException;
 public class NoticeServiceImpl implements NoticeService {
     private final NoticeMapper noticeMapper;
     private final FileUploadHandler fileUploadHandler;
+    private final FileMapper fileMapper;
 
     @Transactional(readOnly = true)
     @Override
@@ -79,6 +82,52 @@ public class NoticeServiceImpl implements NoticeService {
         } catch (Exception e) {
             log.error("공지사항 등록(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("공지사항 등록 중 오류가 발생하였습니다");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Notice getNoticeDetail(Long id) {
+        return noticeMapper.getNotice(id);
+    }
+
+    @Transactional
+    @Override
+    public ApiResponse<?> editNotice(EditNoticeDTO editNoticeDTO, List<MultipartFile> files, String[] deletedFileIds) {
+        try {
+            Notice notice = Notice.builder()
+                    .id(editNoticeDTO.getId())
+                    .noticeType(editNoticeDTO.getNoticeType())
+                    .title(editNoticeDTO.getTitle())
+                    .content(editNoticeDTO.getContent())
+                    .isTop(editNoticeDTO.getIsTop())
+                    .build();
+
+            noticeMapper.editNotice(notice);
+
+            //기존 파일 DB 삭제
+            if (deletedFileIds != null) {
+                for (String fileIdStr : deletedFileIds) {
+                    Long fileId = Long.parseLong(fileIdStr);
+                    fileMapper.deleteFile(fileId);
+                }
+            }
+
+            //새 파일 추가
+            if (files != null && !files.isEmpty()) {
+                fileUploadHandler.saveFiles(files, "NOTICE", editNoticeDTO.getId());
+            }
+
+            return new ApiResponse<>(true, "공지사항을 수정하였습니다");
+        } catch (IOException e) {
+            log.error("공지사항 수정(파일 오류) = {}", e.getMessage());
+            throw new RuntimeException("공지사항 수정 중 오류가 발생하였습니다");
+        } catch (DataAccessException e) {
+            log.error("공지사항 수정(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("공지사항 수정 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("공지사항 수정(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("공지사항 수정 중 오류가 발생하였습니다");
         }
     }
 }

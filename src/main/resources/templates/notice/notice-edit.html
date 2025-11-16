@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>공지사항</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="UTF-8">
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}">
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>공지사항</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -16,98 +18,69 @@
         <div id="notice-edit" class="screen">
             <div class="form-container" style="max-width: 800px;">
                 <h3 style="margin-bottom: 20px; text-align: center;">공지사항 수정</h3>
-
-                <div class="form-group">
-                    <label class="required">구분</label>
-                    <select>
-                        <option>일반</option>
-                        <option>안내</option>
-                        <option selected>긴급</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="required">제목</label>
-                    <input type="text" value="📌 시스템 정기 점검 안내 (10/31)">
-                </div>
-
-                <div class="form-group">
-                    <label class="required">내용</label>
-                    <textarea style="min-height: 300px;">안녕하세요. 재고관리 시스템 관리자입니다.
-
-시스템 안정성 향상 및 신규 기능 추가를 위해 아래와 같이 정기 점검을 실시합니다.
-
-■ 점검 일시
-- 2024년 10월 31일 (목) 02:00 ~ 06:00 (약 4시간)
-
-■ 점검 내용
-- 시스템 서버 업그레이드
-- 데이터베이스 최적화
-- 보안 패치 적용
-
-■ 영향 범위
-- 점검 시간 동안 시스템 전체 서비스 이용 불가
-
-⚠️ 점검 시간 전까지 진행 중인 작업을 모두 저장해 주시기 바랍니다.
-점검 시간은 작업 진행 상황에 따라 다소 변경될 수 있습니다.
-
-이용에 불편을 드려 죄송하며, 더 나은 서비스로 보답하겠습니다.
-
-감사합니다.</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>파일 첨부</label>
-                    <div class="file-upload-area" onclick="document.getElementById('notice-edit-file-input').click()">
-                        <input type="file" id="notice-edit-file-input" multiple onchange="handleFileSelect(this)">
-                        <div style="color: #7f8c8d;">
-                            📎 클릭하여 파일을 선택하거나 드래그하세요<br>
-                            <small>최대 10MB, 최대 5개 파일</small>
-                        </div>
+                <form id="editForm" enctype="multipart/form-data">
+                    <input type="hidden" name="noticeId" th:value="${notice.id}"/>
+                    <div class="form-group">
+                        <label class="required">구분</label>
+                        <select name="noticeType">
+                            <option value="NORMAL" th:attr="selected=${notice.noticeType == 'NORMAL'}">일반</option>
+                            <option value="IMPORTANT" th:attr="selected=${notice.noticeType == 'IMPORTANT'}">중요</option>
+                        </select>
                     </div>
 
-                    <!-- 기존 첨부파일 -->
-                    <div style="margin-top: 15px;">
-                        <h5 style="color: #7f8c8d; font-size: 13px; margin-bottom: 10px;">기존 첨부파일</h5>
-                        <div class="file-item">
-                            <div class="file-item-name">
-                                <span>📄</span>
-                                <span>시스템_점검_상세일정.pdf</span>
-                                <span style="color: #7f8c8d; font-size: 12px;">(256 KB)</span>
+                    <div class="form-group">
+                        <label class="required">제목</label>
+                        <input type="text" id="title" name="title" th:value="${notice.title}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">내용</label>
+                        <textarea style="min-height: 300px;" id="content" name="content">[[${notice.content}]]</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>파일 첨부</label>
+                        <div class="file-upload-area" onclick="document.getElementById('notice-edit-file-input').click()">
+                            <input type="file" id="notice-edit-file-input" name="files" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+                            <div style="color: #7f8c8d;">
+                                📎 클릭하여 파일을 선택하거나 드래그하세요<br>
+                                <small>최대 10MB</small>
                             </div>
-                            <span class="file-item-remove" onclick="removeFile(this)">✕</span>
                         </div>
-                        <div class="file-item">
-                            <div class="file-item-name">
-                                <span>📄</span>
-                                <span>공지사항_이미지.jpg</span>
-                                <span style="color: #7f8c8d; font-size: 12px;">(1.2 MB)</span>
+
+                        <!-- 기존 첨부파일 -->
+                        <div style="margin-top: 15px;">
+                            <h5 style="color: #7f8c8d; font-size: 13px; margin-bottom: 10px;">기존 첨부파일</h5>
+                            <div class="file-item" th:if="${notice.fileList != null && !notice.fileList.isEmpty()}" th:each="file : ${notice.fileList}">
+                                <div class="file-item-name">
+                                    <span>📄</span>
+                                    <span th:text="${file.originalName}"></span>
+                                    <span style="color: #7f8c8d; font-size: 13px;" th:text="${file.fileSize < 1024 ? file.fileSize + ' B' : (file.fileSize < 1048576 ? (#numbers.formatDecimal(file.fileSize / 1024.0, 1, 1) + ' KB') : (file.fileSize < 1073741824 ? (#numbers.formatDecimal(file.fileSize / 1048576.0, 1, 1) + ' MB') : (#numbers.formatDecimal(file.fileSize / 1073741824.0, 1, 1) + ' GB')))}">0 KB</span>
+                                </div>
+                                <span class="file-item-remove" th:data-file-id="${file.id}" onclick="removeExistingFile(this)">✕</span>
                             </div>
-                            <span class="file-item-remove" onclick="removeFile(this)">✕</span>
                         </div>
+
+                        <div class="file-list" id="notice-edit-file-list"></div>
                     </div>
 
-                    <div class="file-list" id="notice-edit-file-list"></div>
-                </div>
-
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" checked style="width: auto; margin-right: 5px;">
-                        상단 고정
-                    </label>
-                    <div class="hint">체크하면 목록 상단에 항상 표시됩니다</div>
-                </div>
-
-                <div class="form-group">
-                    <label>작성 정보</label>
-                    <div class="info-text">
-                        작성자: 관리자 | 작성일: 2024-10-28 09:00 | 조회수: 125
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isTop" name="isTop" th:checked="${notice.isTop == 'Y'}" style="width: auto; margin-right: 5px;">
+                            상단 고정
+                        </label>
+                        <div class="hint">체크하면 목록 상단에 항상 표시됩니다</div>
                     </div>
-                </div>
+
+                    <div class="form-group">
+                        <label>작성 정보</label>
+                        <div class="info-text" th:text="'작성자: ' + ${notice.regUserName} + ' | ' + '작성일: ' + ${#temporals.format(notice.regDate, 'yyyy-MM-dd HH:mm:ss')} + ' | ' + '조회수: ' + ${notice.viewCount}"></div>
+                    </div>
+                </form>
 
                 <div class="form-actions">
-                    <button class="btn btn-primary">수정</button>
-                    <button class="btn" style="background: #95a5a6; color: white;" onclick="showScreen('notice-detail')">취소</button>
+                    <button class="btn btn-primary btn-edit">수정</button>
+                    <button class="btn btn-cancel" style="background: #95a5a6; color: white;">취소</button>
                 </div>
             </div>
         </div>
@@ -116,5 +89,155 @@
 </div>
 
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+
+    const csrfToken = $("meta[name='_csrf']").attr('content');
+    const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
+    let fileList = [];
+    let deletedFileIds = [];
+
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        $("#notice-edit-file-input").on("change", function () {
+            let files = this.files;
+
+            for (let i = 0; i < files.length; i++) {
+                fileList.push(files[i]);
+            }
+            showFileList();
+            $(this).val('');
+        });
+
+        $(".btn-edit").on("click", function (e) {
+           e.preventDefault();
+           editNotice();
+        });
+
+        $(".btn-cancel").on("click", function (e) {
+           e.preventDefault();
+           window.location.href = '/notice';
+        });
+    }
+
+    //공지사항 수정
+    function editNotice() {
+        let noticeId = $("input[name='noticeId']").val();
+        let noticeType = $("select[name='noticeType']").val();
+        let title = $("#title").val();
+        let content = $("#content").val();
+
+        if (!noticeType) {
+            alert("구분을 선택하세요");
+            return;
+        }
+
+        if (!title) {
+            alert("제목을 입력하세요");
+            $("#title").focus();
+            return;
+        }
+
+        if (title.length > 200) {
+            alert("제목은 200자 이내로 입력하세요");
+            $("#title").focus();
+            return;
+        }
+
+        if (!content) {
+            alert("내용을 입력하세요");
+            $("#content").focus();
+            return;
+        }
+
+        let totalSize = 0;
+        for (let i = 0; i < fileList.length; i++) {
+            totalSize += fileList[i].size;
+        }
+
+        if (totalSize > 10 * 1024 * 1024) {
+            alert("전체 파일 크기는 10MB를 초과할 수 없습니다.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("id", noticeId);
+        formData.append("noticeType", noticeType);
+        formData.append("title", title);
+        formData.append("content", content);
+        formData.append("isTop", $("#isTop").is(":checked") ? "Y" : "N");
+
+        //삭제할 파일 ID
+        if (deletedFileIds.length > 0) {
+            deletedFileIds.forEach(function(fileId) {
+                formData.append("deletedFileIds", fileId);
+            });
+        }
+
+        //새로 추가할 파일
+        fileList.forEach(function (file) {
+           formData.append("files", file);
+        });
+
+        $.ajax({
+           url: '/notice',
+           method: 'PUT',
+           data: formData,
+           processData: false,
+           contentType: false,
+           beforeSend: function (xhr) {
+               xhr.setRequestHeader(csrfHeader, csrfToken)
+           },
+           success: function (response) {
+               if (response.success) {
+                   alert(response.message);
+                   window.location.href = `/notice/${noticeId}`
+               }
+           },
+           error: function (xhr, status, error) {
+               alert("실패");
+           }
+        });
+    }
+
+    //파일 목록 표시
+    function showFileList() {
+        $("#notice-edit-file-list").empty();
+
+        for (let i = 0; i < fileList.length; i++) {
+            let file = fileList[i];
+            let size = (file.size / 1024).toFixed(1) + "KB";
+
+            let html = '<div class="file-item">';
+            html += '<div class="file-item-name">';
+            html += '<span>📄</span>';
+            html += '<span>' + file.name + '</span>';
+            html += '<span style="color:#7f8c8d; font-size:13px;">' + size + '</span>';
+            html += '</div>';
+            html += '<span class="file-item-remove" onclick="removeNewFile(' + i + ')">✕</span>';
+            html += '</div>';
+
+            $("#notice-edit-file-list").append(html);
+        }
+    }
+
+    //새 파일 삭제
+    function removeNewFile(index) {
+        fileList.splice(index, 1);
+        showFileList();
+    }
+
+    //기존 파일 삭제
+    function removeExistingFile(element) {
+        let fileId = $(element).data('file-id');
+        deletedFileIds.push(fileId);
+        $(element).closest(".file-item").remove();
+    }
+
+    //init
+    $(function () {
+       addButtonEvent();
+    });
+</script>
 </body>
 </html>

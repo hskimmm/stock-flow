@@ -3,6 +3,7 @@ package com.spring.stockflow.controller.notice;
 import com.spring.stockflow.domain.Notice;
 import com.spring.stockflow.dto.UserDTO;
 import com.spring.stockflow.dto.notice.CreateNoticeDTO;
+import com.spring.stockflow.dto.notice.EditNoticeDTO;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.service.notice.NoticeService;
 import jakarta.validation.Valid;
@@ -51,6 +52,23 @@ public class NoticeController {
     @PostMapping
     public ResponseEntity<ApiResponse<?>> addNotice(@Valid @ModelAttribute CreateNoticeDTO createNoticeDTO, @RequestParam(value = "files", required = false) List<MultipartFile> files) {
         ApiResponse<?> response = noticeService.addNotice(createNoticeDTO, files);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editNoticeForm(@PathVariable(value = "id") Long id, Model model) {
+        Notice notice = noticeService.getNoticeDetail(id);
+        model.addAttribute("notice", notice);
+        model.addAttribute("menuActive", "notice");
+        return "notice/notice-edit";
+    }
+
+    @PutMapping
+    public ResponseEntity<ApiResponse<?>> editNotice(@Valid @ModelAttribute EditNoticeDTO editNoticeDTO,
+                                                     @RequestParam(value = "files", required = false) List<MultipartFile> files,
+                                                     @RequestParam(value = "deletedFileIds", required = false) String[] deletedFileIds) {
+
+        ApiResponse<?> response = noticeService.editNotice(editNoticeDTO, files, deletedFileIds);
         return ResponseEntity.ok(response);
     }
 }
