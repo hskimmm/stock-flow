@@ -64,4 +64,23 @@
         view_count = view_count + 1
         WHERE id = #{id}
     </update>
+
+    <insert id="addNotice" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO notice
+        (
+            notice_type,
+            title,
+            content,
+            is_top,
+            reg_user_id
+        )
+        VALUES
+        (
+            #{noticeType},
+            #{title},
+            #{content},
+            #{isTop},
+            #{regUserId}
+        )
+    </insert>
 </mapper>

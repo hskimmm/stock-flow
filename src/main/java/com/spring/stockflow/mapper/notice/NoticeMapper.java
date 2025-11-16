@@ -12,4 +12,6 @@ public interface NoticeMapper {
     Notice getNotice(Long id);
 
     void increaseViewCount(Long id);
+
+    void addNotice(Notice notice);
 }
