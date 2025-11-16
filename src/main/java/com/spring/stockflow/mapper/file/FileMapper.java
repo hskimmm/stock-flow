@@ -12,4 +12,6 @@ public interface FileMapper {
     void deleteFile(Long fileId);
 
     List<File> getFileList(Long id);
+
+    File getFileById(Long id);
 }

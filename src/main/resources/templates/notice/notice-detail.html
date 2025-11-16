@@ -44,7 +44,7 @@
                             <span>📄</span>
                             <span style="flex: 1;" th:text="${file.originalName}"></span>
                             <span style="color: #7f8c8d; font-size: 13px;" th:text="${file.fileSize < 1024 ? file.fileSize + ' B' : (file.fileSize < 1048576 ? (#numbers.formatDecimal(file.fileSize / 1024.0, 1, 1) + ' KB') : (file.fileSize < 1073741824 ? (#numbers.formatDecimal(file.fileSize / 1048576.0, 1, 1) + ' MB') : (#numbers.formatDecimal(file.fileSize / 1073741824.0, 1, 1) + ' GB')))}">0 KB</span>
-                            <button class="btn btn-primary" style="padding: 5px 15px; margin-left: 10px;" th:onclick="|download(${file.id})|">다운로드</button>
+                            <button class="btn btn-primary" style="padding: 5px 15px; margin-left: 10px;" th:onclick="|fileDownload(${file.id})|">다운로드</button>
                         </div>
                     </div>
 
@@ -179,8 +179,8 @@
     }
 
     //파일 다운로드
-    function download(id) {
-
+    function fileDownload(id) {
+        window.location.href = "/notice/download/" + id;
     }
 
     //init

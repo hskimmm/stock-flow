@@ -36,4 +36,8 @@
     <select id="getFileList" resultType="file">
         SELECT * FROM file WHERE ref_id = #{id}
     </select>
+
+    <select id="getFileById" resultType="file">
+        SELECT * FROM file WHERE id = #{id}
+    </select>
 </mapper>
