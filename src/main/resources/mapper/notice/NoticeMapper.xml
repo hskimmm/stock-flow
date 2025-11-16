@@ -1,0 +1,10 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.stockflow.mapper.notice.NoticeMapper">
+    <select id="getNotices" resultType="notice">
+        SELECT *
+        FROM v_notice_list
+        ORDER BY is_top DESC, reg_date DESC
+    </select>
+</mapper>

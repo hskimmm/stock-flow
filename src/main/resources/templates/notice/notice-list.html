@@ -33,66 +33,14 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr style="background: #fff9e6;">
-                        <td><span style="background: #e74c3c; color: white; padding: 2px 8px; border-radius: 3px; font-size: 12px;">공지</span></td>
-                        <td><span style="color: #e74c3c; font-weight: bold;">긴급</span></td>
-                        <td style="text-align: left; cursor: pointer;" th:onclick="|location.href='@{/notice/detail}'|">
-                            <strong>📌 시스템 정기 점검 안내 (10/31)</strong>
-                        </td>
-                        <td>관리자</td>
-                        <td>2024-10-28 09:00</td>
-                        <td>125</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td><span style="color: #3498db;">일반</span></td>
-                        <td style="text-align: left; cursor: pointer;" onclick="showScreen('notice-detail')">
-                            재고관리 시스템 사용 매뉴얼 업데이트
-                        </td>
-                        <td>홍길동</td>
-                        <td>2024-10-27 14:20</td>
-                        <td>89</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td><span style="color: #f39c12;">안내</span></td>
-                        <td style="text-align: left; cursor: pointer;">
-                            11월 재고실사 일정 안내
-                        </td>
-                        <td>김철수</td>
-                        <td>2024-10-25 10:15</td>
-                        <td>156</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td><span style="color: #3498db;">일반</span></td>
-                        <td style="text-align: left; cursor: pointer;">
-                            신규 공급업체 등록 완료
-                        </td>
-                        <td>이영희</td>
-                        <td>2024-10-22 16:30</td>
-                        <td>67</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td><span style="color: #f39c12;">안내</span></td>
-                        <td style="text-align: left; cursor: pointer;">
-                            안전재고 기준 변경 안내
-                        </td>
-                        <td>관리자</td>
-                        <td>2024-10-20 11:00</td>
-                        <td>203</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td><span style="color: #3498db;">일반</span></td>
-                        <td style="text-align: left; cursor: pointer;">
-                            재고관리 시스템 오픈 안내
-                        </td>
-                        <td>관리자</td>
-                        <td>2024-10-01 09:00</td>
-                        <td>345</td>
-                    </tr>
+                        <tr th:each="list : ${noticeList}">
+                            <td th:text="${list.id}"></td>
+                            <td><span th:style="${list.noticeType == 'IMPORTANT' ? 'color: #e74c3c; font-weight: bold;' : 'color: #3498db;'}" th:text="${list.noticeType == 'IMPORTANT' ? '중요' : '일반'}"></span></td>
+                            <td th:style="${list.noticeType == 'IMPORTANT' ? 'text-align: left; cursor: pointer; font-weight: bold;' : 'text-align: left; cursor: pointer;'}" th:text="${list.title}" th:onclick="|location.href='@{/notice/detail}'|"></td>
+                            <td th:text="${list.regUserName}"></td>
+                            <td th:text="${#temporals.format(list.regDate, 'yyyy-MM-dd')}"></td>
+                            <td th:text="${list.viewCount}"></td>
+                        </tr>
                     </tbody>
                 </table>
                 <!-- 페이징 -->
