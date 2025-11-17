@@ -1,0 +1,40 @@
+package com.spring.stockflow.service.comment;
+
+import com.spring.stockflow.domain.Comment;
+import com.spring.stockflow.dto.comment.CreateCommentDTO;
+import com.spring.stockflow.mapper.comment.CommentMapper;
+import com.spring.stockflow.response.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Log4j2
+public class CommentServiceImpl implements CommentService {
+
+    private final CommentMapper commentMapper;
+
+    @Transactional
+    @Override
+    public ApiResponse<?> addComment(CreateCommentDTO createCommentDTO) {
+        try {
+            Comment comment = Comment.builder()
+                    .noticeId(createCommentDTO.getNoticeId())
+                    .regUserId(createCommentDTO.getRegUserId())
+                    .content(createCommentDTO.getContent())
+                    .build();
+
+            commentMapper.addComment(comment);
+            return new ApiResponse<>(true, "댓글을 등록하였습니다");
+        } catch (DataAccessException e) {
+            log.error("댓글 등록(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("댓글 등록 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("댓글 등록(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("댓글 등록 중 오류가 발생하였습니다");
+        }
+    }
+}

@@ -57,9 +57,11 @@ public class NoticeController {
     @GetMapping("/{id}")
     public String getNotice(@PathVariable(value = "id") Long id,
                             @ModelAttribute(value = "pagination") Pagination pagination,
+                            @AuthenticationPrincipal UserDTO userDTO,
                             Model model) {
         Notice notice = noticeService.getNotice(id);
         model.addAttribute("notice", notice);
+        model.addAttribute("userId",userDTO.getId());
         model.addAttribute("menuActive", "notice");
         return "notice/notice-detail";
     }
