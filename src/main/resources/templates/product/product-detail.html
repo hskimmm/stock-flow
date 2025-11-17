@@ -19,45 +19,47 @@
 
                     <div class="form-group">
                         <label>상품코드</label>
-                        <div class="info-text">PRD-001</div>
+                        <div class="info-text" th:text="${product.productCode}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>상품명</label>
-                        <div class="info-text">A제품</div>
+                        <div class="info-text" th:text="${product.productName}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>카테고리</label>
-                        <div class="info-text">전자</div>
+                        <div class="info-text" th:text="${product.category}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>단위</label>
-                        <div class="info-text">개</div>
+                        <div class="info-text" th:text="${product.unit}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>안전재고</label>
-                        <div class="info-text">50개</div>
+                        <div class="info-text" th:text="${product.safetyStock}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>현재재고</label>
-                        <div class="info-text" style="background: #d4edda; color: #155724; font-weight: bold;">150개</div>
+                        <div class="info-text" style="background: #d4edda; color: #155724; font-weight: bold;" th:text="${product.currentStock}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>등록일</label>
-                        <div class="info-text">2024-10-01 10:30:00</div>
+                        <div class="info-text" th:text="${#temporals.format(product.regDate, 'yyyyMMdd')}"></div>
                     </div>
 
                     <div class="form-group">
                         <label>비고</label>
-                        <div class="info-text">테스트 상품입니다</div>
+                        <div class="info-text" th:text="${product.remarks}"></div>
                     </div>
 
                     <h4 style="margin: 30px 0 15px;">최근 입출고 내역</h4>
+                    <!-- 입/출고 기능 완료 시 개발 진행 -->
+                    [[${history}]]
                     <table>
                         <thead>
                         <tr>
@@ -68,29 +70,22 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>2024-10-28 14:30</td>
-                            <td><span style="color: #3498db;">입고</span></td>
-                            <td>+100개</td>
-                            <td>홍길동</td>
+                        <tr th:if="${#lists.isEmpty(inventoryHistory)}">
+                            <td colspan="4" style="text-align: center; color: #999; padding: 20px;">
+                                최근 입출고 내역이 없습니다.
+                            </td>
                         </tr>
-                        <tr>
-                            <td>2024-10-27 10:15</td>
-                            <td><span style="color: #e74c3c;">출고</span></td>
-                            <td>-50개</td>
-                            <td>김철수</td>
-                        </tr>
-                        <tr>
-                            <td>2024-10-26 15:20</td>
-                            <td><span style="color: #3498db;">입고</span></td>
-                            <td>+200개</td>
-                            <td>이영희</td>
+                        <tr th:each="history : ${inventoryHistory}">
+                            <td th:text="${#temporals.format(history.transactionDate, 'yyyy-MM-dd')}"></td>
+                            <td><span th:style="${history.type == 'IN' ? 'color: #3498db' : 'color: #e74c3c'}" th:text="${history.type == 'IN' ? '입고' : '출고'}">입고</span></td>
+                            <td th:text="${history.quantity}"></td>
+                            <td th:text="${history.regUserName}"></td>
                         </tr>
                         </tbody>
                     </table>
 
                     <div class="form-actions">
-                        <button class="btn btn-primary" data-screen="inventory">확인</button>
+                        <button class="btn btn-primary btn-cancel" data-screen="inventory">확인</button>
                     </div>
                 </div>
             </div>
@@ -98,6 +93,26 @@
     </div>
 </div>
 
+<form id="pageForm">
+    <input type="hidden" name="pageNum" th:value="${pagination.pageNum}"/>
+</form>
+
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+
+    const pageForm = $("#pageForm");
+
+    function addButtonEvent() {
+        $(".btn-cancel").on("click", function (e) {
+           e.preventDefault();
+           pageForm.attr('action', '/product');
+           pageForm.submit();
+        });
+    }
+
+    $(function () {
+        addButtonEvent();
+    })
+</script>
 </body>
 </html>

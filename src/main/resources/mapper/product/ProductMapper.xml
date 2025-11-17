@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.stockflow.mapper.product.ProductMapper">
+    <sql id="search">
+        <if test="keyword != null">
+            AND (
+                product_name LIKE CONCAT('%', #{keyword}, '%')
+                OR category LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+    </sql>
+
+    <select id="getProducts" resultType="product">
+        SELECT id, product_code, product_name, category, unit, safety_stock, current_stock, remarks, reg_date, mod_date, del_yn
+        FROM product
+        WHERE del_yn = 'N'
+        <include refid="search"/>
+        ORDER BY id DESC
+        LIMIT #{skip}, #{amount}
+    </select>
+
+    <select id="findLastProductCodeByDate" resultType="string">
+        SELECT product_code
+        FROM product
+        WHERE product_code LIKE CONCAT('PRD-', #{dateStr}, '%')
+        ORDER BY product_code DESC
+        LIMIT 1
+    </select>
+
+    <insert id="addProduct" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO product
+        (
+            product_code,
+            product_name,
+            category,
+            unit,
+            safety_stock,
+            remarks
+        )
+        VALUES
+        (
+            #{productCode},
+            #{productName},
+            #{category},
+            #{unit},
+            #{safetyStock},
+            #{remarks}
+        )
+    </insert>
+
+    <select id="getProduct" resultType="product">
+        SELECT id, product_code, product_name, category, unit, safety_stock, current_stock, remarks, reg_date, mod_date, del_yn
+        FROM product
+        WHERE del_yn = 'N'
+        AND id = #{id}
+    </select>
+
+    <update id="editProduct">
+        UPDATE product SET
+            product_name = #{productName},
+            category = #{category},
+            unit = #{unit},
+            safety_stock = #{safetyStock},
+            remarks = #{remarks}
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteProduct">
+        UPDATE product SET
+            del_yn = 'Y'
+        WHERE id = #{id}
+    </update>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(id)
+        FROM product
+        WHERE del_yn = 'N'
+        <include refid="search"/>
+    </select>
+
+    <select id="getProductHistory" resultType="com.spring.stockflow.dto.history.InventoryHistoryDTO">
+        SELECT * FROM v_inventory_history where product_id = #{id} LIMIT 5
+    </select>
+
+    <select id="existsInventoryHistory" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1 FROM v_inventory_history WHERE product_id = #{id}
+        )
+    </select>
+</mapper>

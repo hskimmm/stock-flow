@@ -1,0 +1,46 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.stockflow.mapper.comment.CommentMapper">
+    <insert id="addComment">
+        INSERT INTO notice_comment
+        (
+            notice_id,
+            reg_user_id,
+            content
+        )
+        VALUES
+        (
+            #{noticeId},
+            #{regUserId},
+            #{content}
+        )
+    </insert>
+
+    <select id="getComments" resultType="comment">
+        SELECT nc.id, nc.notice_id, nc.content, nc.reg_user_id, nc.reg_date, nc.mod_date, nc.del_yn, u.user_name
+        FROM notice_comment nc
+        INNER JOIN user u
+        ON nc.reg_user_id = u.id
+        WHERE nc.notice_id = #{id}
+        AND nc.del_yn = 'N'
+        ORDER BY id DESC
+        LIMIT #{pagination.skip}, #{pagination.amount}
+    </select>
+
+    <update id="editComment">
+        UPDATE notice_comment SET
+        content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteComment">
+        UPDATE notice_comment SET
+        del_yn = 'Y'
+        WHERE id = #{id}
+    </update>
+
+    <select id="getTotalComment" resultType="int">
+        SELECT COUNT(*) FROM notice_comment WHERE del_yn = 'N' AND notice_id = #{id}
+    </select>
+</mapper>

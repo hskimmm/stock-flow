@@ -15,8 +15,8 @@
         <p>Inventory Management System</p>
     </div>
 
-    <div class="error-message" id="error-message" th:if="${error}">
-        <span th:text="${error}">아이디 또는 비밀번호가 일치하지 않습니다.</span>
+    <div class="error-message" id="error-message" th:if="${param.error}">
+        <span th:text="${exception}?:'아이디 또는 비밀번호가 일치하지 않습니다.'"></span>
     </div>
 
     <form th:action="@{/login}" method="post" id="login-form">
@@ -43,7 +43,7 @@
     </form>
 
     <div class="login-footer">
-        <p>© 2024 Inventory Management System. All rights reserved.</p>
+        <p>© 2025 Inventory Management System. All rights reserved.</p>
     </div>
 </div>
 
@@ -51,8 +51,8 @@
     $(document).ready(function() {
         // 엔터키로 로그인
         $('#login-form').on('submit', function(e) {
-            var userId = $('#userId').val().trim();
-            var password = $('#password').val().trim();
+            let userId = $('#userId').val().trim();
+            let password = $('#password').val().trim();
 
             if (!userId) {
                 alert('아이디를 입력하세요.');

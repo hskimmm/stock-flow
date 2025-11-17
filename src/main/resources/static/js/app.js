@@ -3,7 +3,7 @@
 $(document).ready(function() {
     // 서브메뉴 토글
     $('.menu-item[data-submenu]').on('click', function() {
-        var submenuId = $(this).data('submenu') + '-submenu';
+        let submenuId = $(this).data('submenu') + '-submenu';
         $('#' + submenuId).toggleClass('show');
     });
 
@@ -14,11 +14,15 @@ $(document).ready(function() {
 
     // 출고 시 현재고 표시
     $('#product-select').on('change', function() {
-        var stock = $(this).val();
-        var $stockDiv = $('#current-stock');
+        let stock = $(this).find("option:selected").data('stock');
+        let unit = $(this).find("option:selected").data('unit');
+
+        console.log(stock);
+
+        let $stockDiv = $('#current-stock');
 
         if (stock) {
-            $stockDiv.text('현재고량: ' + stock + '개');
+            $stockDiv.text('현재고량: ' + stock + unit);
             if (stock > 0) {
                 $stockDiv.css('background', '#e8f4f8');
             } else {
@@ -29,22 +33,33 @@ $(document).ready(function() {
             $stockDiv.css('background', '#e8f4f8');
         }
     });
-
-    // 삭제 버튼 이벤트
-    $(document).on('click', '.btn-delete', function() {
-        var type = $(this).data('type');
-        if (confirm('정말 이 ' + type + '을(를) 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
-            alert(type + '이(가) 삭제되었습니다.');
-            // 실제로는 여기서 서버에 삭제 요청
-            // $.ajax({
-            //     url: '/api/delete',
-            //     method: 'POST',
-            //     data: { id: ... },
-            //     success: function() {
-            //         // 성공 처리
-            //     }
-            // });
-        }
-    });
-
 });
+
+//날짜 범위 초기화(최근 1개월)
+function initDateRange() {
+    const startInput = $("#startDate");
+    const endInput = $("#endDate");
+
+    //검색 시 initDateRange 호출하여 값이 덮어 씌워지는 버그 방지
+    if (startInput.val() && endInput.val()) return;
+
+    const today = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(today.getMonth() - 1);
+
+    const startDateStr = formatDate(oneMonthAgo);
+    const endDateStr = formatDate(today);
+
+    $("#startDate").val(startDateStr);
+    $("#endDate").val(endDateStr);
+
+    $("#endDate").attr('max', endDateStr);
+}
+
+//DATE -> YYYY-MM-DD 형식 변환
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.stockflow.mapper.inventory.InventoryMapper">
+    <sql id="search">
+        <if test="category != null and category != ''">
+            AND category = #{category}
+        </if>
+        <if test="status != null and status != ''">
+            AND stock_status = #{status}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND product_name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+    </sql>
+
+    <select id="getInventories" resultType="com.spring.stockflow.dto.status.InventoryStatusDTO">
+        select id, product_code, product_name, category, unit, safety_stock, current_stock, stock_status, remarks, reg_date
+        From v_inventory_status
+        WHERE id > 0
+        <include refid="search"/>
+        ORDER BY reg_date desc
+        LIMIT #{skip}, #{amount}
+    </select>
+
+    <select id="getTotalInventories" resultType="int">
+        SELECT COUNT(id)
+        FROM v_inventory_status
+        WHERE id > 0
+        <include refid="search"/>
+    </select>
+</mapper>

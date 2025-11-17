@@ -2,6 +2,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}">
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}">
     <title>상품 목록</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -14,57 +16,63 @@
         <div class="content">
             <div id="product-add">
                 <div class="form-container">
-                    <div class="form-group">
-                        <label>상품코드</label>
-                        <input type="text" value="PRD-AUTO-001" disabled>
-                        <div class="hint">자동 생성됩니다</div>
-                    </div>
+                    <form id="productAddForm">
+                        <div class="form-group">
+                            <label class="required">상품명</label>
+                            <input type="text" id="productName" name="productName" placeholder="상품명을 입력하세요">
+                        </div>
 
-                    <div class="form-group">
-                        <label class="required">상품명</label>
-                        <input type="text" placeholder="상품명을 입력하세요">
-                    </div>
+                        <div class="form-group">
+                            <label class="required">카테고리</label>
+                            <select name="category">
+                                <option value="">선택하세요</option>
+                                <option value="전자">전자</option>
+                                <option value="의류">의류</option>
+                                <option value="식품">식품</option>
+                                <option value="기타">기타</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label class="required">카테고리</label>
-                        <select>
-                            <option>선택하세요</option>
-                            <option>전자</option>
-                            <option>의류</option>
-                            <option>식품</option>
-                            <option>기타</option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label>단위</label>
+                            <select name="unit">
+                                <option name="개">개</option>
+                                <option name="박스">박스</option>
+                                <option name="kg">kg</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label>단위</label>
-                        <select>
-                            <option>개</option>
-                            <option>박스</option>
-                            <option>kg</option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label class="required">안전재고</label>
+                            <input type="number" id="safetyStock" name="safetyStock" placeholder="0">
+                            <div class="hint">이 수량 이하일 때 알림이 표시됩니다</div>
+                        </div>
 
-                    <div class="form-group">
-                        <label class="required">안전재고</label>
-                        <input type="number" placeholder="0">
-                        <div class="hint">이 수량 이하일 때 알림이 표시됩니다</div>
-                    </div>
+                        <div class="form-group">
+                            <label>초기재고 (선택)</label>
+                            <input type="number" id="initialStock" name="initialStock" placeholder="0">
+                            <div class="hint">상품 등록 시 초기 재고량</div>
+                        </div>
 
-                    <div class="form-group">
-                        <label>초기재고 (선택)</label>
-                        <input type="number" placeholder="0">
-                        <div class="hint">상품 등록 시 초기 재고량</div>
-                    </div>
+                        <!-- 초기 입고 정보 -->
+                        <div class="form-group">
+                            <label>공급업체 (초기재고 입력 시 필수)</label>
+                            <input type="text" id="initialSupplier" name="initialSupplier" placeholder="공급업체명을 입력하세요">
+                        </div>
 
-                    <div class="form-group">
-                        <label>비고</label>
-                        <textarea placeholder="추가 정보를 입력하세요"></textarea>
-                    </div>
+                        <div class="form-group">
+                            <label>입고 비고</label>
+                            <input type="text" id="initialInboundRemarks" name="initialInboundRemarks" placeholder="초기재고 입고 비고">
+                        </div>
 
+                        <div class="form-group">
+                            <label>상품 비고</label>
+                            <textarea id="remarks" name="remarks" placeholder="추가 정보를 입력하세요"></textarea>
+                        </div>
+                    </form>
                     <div class="form-actions">
-                        <button class="btn btn-primary">등록</button>
-                        <button class="btn" style="background: #95a5a6; color: white;" data-screen="product-list">취소</button>
+                        <button class="btn btn-primary btn-create">등록</button>
+                        <button class="btn btn-cancel" style="background: #95a5a6; color: white;" data-screen="product-list">취소</button>
                     </div>
                 </div>
             </div>
@@ -72,6 +80,140 @@
     </div>
 </div>
 
+<form id="pageForm">
+    <input type="hidden" name="pageNum" th:value="${pagination.pageNum}"/>
+</form>
+
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+
+    const csrfToken = $("meta[name='_csrf']").attr('content');
+    const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
+    const productAddForm = $("#productAddForm");
+    const pageForm = $("#pageForm");
+
+
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        $(".btn-cancel").on("click", function (e) {
+           e.preventDefault();
+           pageForm.attr('action', '/product');
+           pageForm.submit();
+        });
+
+        $(".btn-create").on("click", function (e) {
+           e.preventDefault();
+           createProduct();
+        });
+    }
+
+    //상품 등록
+    function createProduct() {
+        const formData = new FormData(productAddForm[0]);
+
+        if (validateInputCheck(formData)) {
+            $.ajax({
+               url: '/product',
+               method: 'POST',
+               data: formData,
+               processData: false,
+               contentType: false,
+               beforeSend: function (xhr) {
+                   xhr.setRequestHeader(csrfHeader, csrfToken)
+               },
+               success: function (response) {
+                   if (response.success) {
+                       alert(response.message);
+                       window.location.href = '/product';
+                   }
+               },
+               error: function (xhr, status, error) {
+                   let response;
+                   try {
+                       response = JSON.parse(xhr.responseText);
+                   } catch (e) {
+                       alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                       return e;
+                   }
+
+                   let errorMessage = response.message;
+                   if (xhr.status === 400) {
+                       let errors = response.items;
+                       if (errors['productName']) {
+                           alert(errors['productName']);
+                           return false;
+                       } else if (errors['category']) {
+                           alert(errors['category']);
+                           return false;
+                       } else if (errors['safetyStock']) {
+                           alert(errors['safetyStock']);
+                           return false;
+                       }
+                   } else if (xhr.status === 500) {
+                       alert(errorMessage);
+                       return false;
+                   }
+               }
+            });
+        }
+    }
+
+    //Input 태그 유효성 검사
+    function validateInputCheck(formData) {
+        const stockPattern = /^[1-9]\d*$/;
+
+        for (const [key, value] of formData.entries()) {
+            let trimmedValue = value.trim();
+            if (value !== trimmedValue) {
+                formData.set(key, trimmedValue);
+            }
+
+            if (key === 'productName' && trimmedValue === '') {
+                alert("상품명을 입력하세요");
+                $("#productName").focus();
+                return false;
+            }
+
+            if (key === 'category' && trimmedValue === '') {
+                alert("카테고리를 선택하세요");
+                return false;
+            }
+
+            if (key === 'safetyStock' && trimmedValue === '') {
+                alert("안전재고 수량을 입력하세요");
+                $("#safetyStock").focus();
+                return false;
+            }
+
+            if (key === 'safetyStock' && trimmedValue !== '' && !stockPattern.test(trimmedValue)) {
+                alert("안전재고 수량은 1 이상이어야 합니다");
+                $("#safetyStock").focus();
+                return false;
+            }
+
+            if (key === 'initialStock' && trimmedValue !== '' && !stockPattern.test(trimmedValue)) {
+                alert("초기재고 수량은 1 이상이어야 합니다");
+                $("#initialStock").focus();
+                return false;
+            }
+
+            if (key === 'initialStock' && trimmedValue !== '') {
+                let initialSupplierValue = $("input[name='initialSupplier']").val();
+                if (initialSupplierValue === '') {
+                    alert("초기재고가 있을 경우 공급업체를 입력하세요");
+                    $("#initialSupplier").focus();
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    //init
+    $(function () {
+       addButtonEvent();
+    });
+</script>
 </body>
 </html>
