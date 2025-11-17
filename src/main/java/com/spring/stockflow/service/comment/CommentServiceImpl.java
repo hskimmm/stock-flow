@@ -85,4 +85,23 @@ public class CommentServiceImpl implements CommentService {
             throw new RuntimeException("댓글 수정 중 오류가 발생하였습니다");
         }
     }
+
+    @Transactional
+    @Override
+    public ApiResponse<?> deleteComment(Long id) {
+        if (id == null) {
+            throw new CommentNotFoundException("댓글이 존재하지 않습니다");
+        }
+
+        try {
+            commentMapper.deleteComment(id);
+            return new ApiResponse<>(true, "댓글을 삭제하였습니다");
+        } catch (DataAccessException e) {
+            log.error("댓글 삭제(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("댓글 삭제 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("댓글 삭제(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("댓글 삭제 중 오류가 발생하였습니다");
+        }
+    }
 }

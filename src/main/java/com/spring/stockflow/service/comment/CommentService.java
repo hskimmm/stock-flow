@@ -11,4 +11,6 @@ public interface CommentService {
     ApiResponse<?> getComments(Long id);
 
     ApiResponse<?> editComment(@Valid EditCommentDTO editCommentDTO);
+
+    ApiResponse<?> deleteComment(Long id);
 }

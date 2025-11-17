@@ -31,4 +31,10 @@
         content = #{content}
         WHERE id = #{id}
     </update>
+
+    <update id="deleteComment">
+        UPDATE notice_comment SET
+        del_yn = 'Y'
+        WHERE id = #{id}
+    </update>
 </mapper>

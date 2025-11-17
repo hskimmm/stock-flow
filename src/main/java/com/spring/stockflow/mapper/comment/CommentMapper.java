@@ -12,4 +12,6 @@ public interface CommentMapper {
     List<Comment> getComments(Long id);
 
     void editComment(Comment comment);
+
+    void deleteComment(Long id);
 }

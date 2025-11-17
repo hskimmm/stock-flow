@@ -139,6 +139,15 @@
             e.preventDefault();
             loadCommentList();
         });
+
+        $(".comment-list").on("click", ".btn-comment-delete", function (e) {
+           e.preventDefault();
+
+           if (confirm("댓글을 삭제하시겠습니까?")) {
+               let commentId = $(this).data('comment-id');
+               deleteComment(commentId);
+           }
+        });
     }
 
     //공지사항 삭제
@@ -285,7 +294,7 @@
                             </div>
                             <div class="comment-actions">
                                 <button class="btn-comment-edit">수정</button>
-                                <button class="btn-comment-delete">삭제</button>
+                                <button class="btn-comment-delete" data-comment-id="${comment.id}">삭제</button>
                             </div>
                         </div>
                         <div class="comment-content">
@@ -344,6 +353,43 @@
                        return false;
                    }
                } else if (xhr.status === 404) {
+                   alert(errorMessage);
+                   return false;
+               } else if (xhr.status === 500) {
+                   alert(errorMessage);
+                   return false;
+               }
+           }
+        });
+    }
+
+    //댓글 삭제
+    function deleteComment(id) {
+        $.ajax({
+           url: '/comment',
+           method: 'DELETE',
+           data: JSON.stringify(id),
+           contentType: 'application/json',
+           beforeSend: function (xhr) {
+               xhr.setRequestHeader(csrfHeader, csrfToken);
+           },
+           success: function (response) {
+               if (response.success) {
+                   alert(response.message);
+                   loadCommentList();
+               }
+           },
+           error: function (xhr, status, error) {
+               let response;
+               try {
+                   response = JSON.parse(xhr.responseText);
+               } catch (e) {
+                   alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                   return e;
+               }
+
+               let errorMessage = response.message;
+               if (xhr.status === 404) {
                    alert(errorMessage);
                    return false;
                } else if (xhr.status === 500) {
