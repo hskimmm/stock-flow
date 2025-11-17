@@ -1,0 +1,27 @@
+package com.spring.stockflow.service.notice;
+
+import com.spring.stockflow.domain.Notice;
+import com.spring.stockflow.dto.notice.CreateNoticeDTO;
+import com.spring.stockflow.dto.notice.EditNoticeDTO;
+import com.spring.stockflow.response.ApiResponse;
+import com.spring.stockflow.util.Pagination;
+import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+public interface NoticeService {
+    List<Notice> getNotices(Pagination pagination);
+
+    Notice getNotice(Long id);
+
+    ApiResponse<?> addNotice(@Valid CreateNoticeDTO createNoticeDTO, List<MultipartFile> files);
+
+    Notice getNoticeDetail(Long id);
+
+    ApiResponse<?> editNotice(@Valid EditNoticeDTO editNoticeDTO, List<MultipartFile> files, String[] deletedFileIds);
+
+    ApiResponse<?> deleteNotice(Long id);
+
+    int getTotalNotice(Pagination pagination);
+}

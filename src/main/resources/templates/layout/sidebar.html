@@ -1,4 +1,4 @@
-<div class="sidebar" th:fragment="sidebar">
+<div class="sidebar" th:fragment="sidebar" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <div class="logo">📦 재고관리 시스템</div>
   <ul class="menu">
     <li class="menu-item" th:classappend="${menuActive == 'dashboard'} ? 'active' : ''">
@@ -63,13 +63,13 @@
       <a th:href="@{/statistics}">📈 통계</a>
     </li>
 
-    <li class="menu-item"
+    <li class="menu-item" sec:authorize="hasAuthority('ADMIN')"
         th:classappend="${#strings.startsWith(menuActive, 'admin')} ? 'active' : ''">
       <a th:href="@{/admin}">⚙️ 관리자</a>
     </li>
 
     <li class="menu-item" th:classappend="${menuActive == 'notice'} ? 'active' : ''">
-      <a th:href="@{/notice/list}">📢 공지사항</a>
+      <a th:href="@{/notice}">📢 공지사항</a>
     </li>
   </ul>
 </div>

@@ -81,4 +81,10 @@ public class ProductController {
         ApiResponse<?> response = productService.deleteProduct(id);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/exists-inventory-history/{id}")
+    public ResponseEntity<ApiResponse<?>> existsInventoryHistory(@PathVariable(value = "id") Long id) {
+        ApiResponse<?> response = productService.existsInventoryHistory(id);
+        return ResponseEntity.ok(response);
+    }
 }

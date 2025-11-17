@@ -24,4 +24,6 @@ public interface ProductMapper {
     int getTotalCount(Pagination pagination);
 
     List<InventoryHistoryDTO> getProductHistory(Long id);
+
+    boolean existsInventoryHistory(Long id);
 }

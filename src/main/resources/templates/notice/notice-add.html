@@ -2,6 +2,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}">
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}">
     <title>공지사항</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -16,49 +18,50 @@
             <div id="notice-add" class="screen">
                 <div class="form-container" style="max-width: 800px;">
                     <h3 style="margin-bottom: 20px; text-align: center;">공지사항 작성</h3>
-
-                    <div class="form-group">
-                        <label class="required">구분</label>
-                        <select>
-                            <option>일반</option>
-                            <option>안내</option>
-                            <option>긴급</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="required">제목</label>
-                        <input type="text" placeholder="제목을 입력하세요">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="required">내용</label>
-                        <textarea style="min-height: 300px;" placeholder="내용을 입력하세요"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>파일 첨부</label>
-                        <div class="file-upload-area" onclick="document.getElementById('notice-file-input').click()">
-                            <input type="file" id="notice-file-input" multiple onchange="handleFileSelect(this)">
-                            <div style="color: #7f8c8d;">
-                                📎 클릭하여 파일을 선택하거나 드래그하세요<br>
-                                <small>최대 10MB, 최대 5개 파일</small>
-                            </div>
+                    <form id="noticeAddForm" enctype="multipart/form-data">
+                        <input type="hidden" name="userId" th:value="${userId}"/>
+                        <div class="form-group">
+                            <label class="required">구분</label>
+                            <select name="noticeType">
+                                <option value="NORMAL">일반</option>
+                                <option value="IMPORTANT">중요</option>
+                            </select>
                         </div>
-                        <div class="file-list" id="notice-file-list"></div>
-                    </div>
 
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" style="width: auto; margin-right: 5px;">
-                            상단 고정
-                        </label>
-                        <div class="hint">체크하면 목록 상단에 항상 표시됩니다</div>
-                    </div>
+                        <div class="form-group">
+                            <label class="required">제목</label>
+                            <input type="text" id="title" name="title" placeholder="제목을 입력하세요">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="required">내용</label>
+                            <textarea style="min-height: 300px;" id="content" name="content" placeholder="내용을 입력하세요"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>파일 첨부</label>
+                            <div class="file-upload-area" onclick="document.getElementById('notice-file-input').click()">
+                                <input type="file" id="notice-file-input" name="files" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+                                <div style="color: #7f8c8d;">
+                                    📎 클릭하여 파일을 선택하거나 드래그하세요<br>
+                                    <small>최대 10MB</small>
+                                </div>
+                            </div>
+                            <div class="file-list" id="notice-file-list"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" style="width: auto; margin-right: 5px;" id="isTop" name="isTop">
+                                상단 고정
+                            </label>
+                            <div class="hint">체크하면 목록 상단에 항상 표시됩니다</div>
+                        </div>
+                    </form>
 
                     <div class="form-actions">
-                        <button class="btn btn-primary">등록</button>
-                        <button class="btn" style="background: #95a5a6; color: white;" onclick="showScreen('notice-list')">취소</button>
+                        <button class="btn btn-primary btn-create">등록</button>
+                        <button class="btn btn-cancel" style="background: #95a5a6; color: white;">취소</button>
                     </div>
                 </div>
             </div>
@@ -66,6 +69,170 @@
     </div>
 </div>
 
+<form id="pageForm">
+    <input type="hidden" name="pageNum" th:value="${pagination.pageNum}"/>
+    <input type="hidden" name="keyword" th:value="${pagination.keyword}"/>
+</form>
+
 <script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+
+    const csrfToken = $("meta[name='_csrf']").attr('content');
+    const csrfHeader = $("meta[name='_csrf_header']").attr('content');
+
+    const pageForm = $("#pageForm");
+
+    let fileList = [];
+
+    //버튼 이벤트 처리
+    function addButtonEvent() {
+        $("#notice-file-input").on("change", function () {
+           let files = this.files;
+           for (let i = 0; i < files.length; i++) {
+               fileList.push(files[i]);
+           }
+           showFileList();
+           $(this).val('');
+        });
+
+        $(".btn-create").on("click", function (e) {
+           e.preventDefault();
+           createNotice();
+        });
+
+        $(".btn-cancel").on("click", function (e) {
+           e.preventDefault();
+           pageForm.attr('action', '/notice');
+           pageForm.submit();
+        });
+    }
+
+    //공지사항 등록
+    function createNotice() {
+        let noticeType = $("select[name='noticeType']").val();
+        let title = $("#title").val();
+        let content = $("#content").val();
+
+        if (!noticeType) {
+            alert("구분을 선택하세요");
+            $("select[name='noticeType']").focus();
+            return;
+        }
+
+        if (!title) {
+            alert("제목을 입력하세요");
+            $("#title").focus();
+            return;
+        }
+
+        if (title.length > 200) {
+            alert("제목은 200자 이내로 입력하세요");
+            $("#title").focus();
+            return;
+        }
+
+        if (!content) {
+            alert("내용을 입력하세요");
+            $("#content").focus();
+            return;
+        }
+
+        //파일 크기 체크(10MB)
+        let totalSize = 0;
+        for (let i = 0; i < fileList.length; i++) {
+            totalSize += fileList[i].size;
+        }
+
+        if (totalSize > 10 * 1024 * 1024) {
+            alert("전체 파일 크기는 10MB를 초과할 수 없습니다.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("noticeType", noticeType);
+        formData.append("title", title);
+        formData.append("content", content);
+        formData.append("isTop", $("#isTop").is(":checked") ? "Y" : "N");
+        formData.append("userId", $("input[name='userId']").val());
+
+        for (let i = 0; i < fileList.length; i++) {
+            formData.append("files", fileList[i]);
+        }
+
+        $.ajax({
+           url: '/notice',
+           method: 'POST',
+           data: formData,
+           processData: false,
+           contentType: false,
+           beforeSend: function (xhr) {
+               xhr.setRequestHeader(csrfHeader, csrfToken);
+           },
+           success: function (response) {
+               if (response.success) {
+                   alert(response.message);
+                   window.location.href = '/notice';
+               }
+           },
+           error: function (xhr, status, error) {
+               let response;
+               try {
+                   response = JSON.parse(xhr.responseText);
+               } catch (e) {
+                   alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                   return e;
+               }
+
+               let errorMessage = response.message;
+               if (xhr.status === 400) {
+                   let errors = response.items;
+                   if (errors['noticeType']) {
+                       alert(errors['noticeType']);
+                       return false;
+                   } else if (errors['title']) {
+                       alert(errors['title']);
+                       $("#title").focus();
+                       return false;
+                   } else if (errors['content']) {
+                       alert(errors['content']);
+                       $("#content").focus();
+                       return false;
+                   }
+               } else if (xhr.status === 500) {
+                   alert(errorMessage);
+               }
+           }
+        });
+    }
+
+    //파일 목록 표시
+    function showFileList() {
+        $("#notice-file-list").empty();
+
+        for (let i = 0; i < fileList.length; i++) {
+            let file = fileList[i];
+            let size = (file.size / 1024).toFixed(1) + "KB";
+
+            let html = '<div style="display:flex; padding:10px; border:1px solid #ddd; margin-top:10px; border-radius:5px;">';
+            html += '<span style="flex:1;">📄 ' + file.name + '</span>';
+            html += '<span style="color:#999; margin-right:10px;">' + size + '</span>';
+            html += '<button type="button" onclick="removeFile(' + i + ')" style="background:#e74c3c; color:white; padding:5px 10px; border:none; border-radius:3px; cursor:pointer;">삭제</button>';
+            html += '</div>';
+
+            $("#notice-file-list").append(html);
+        }
+    }
+
+    //파일 삭제
+    function removeFile(index) {
+        fileList.splice(index, 1);
+        showFileList();
+    }
+
+    //init
+    $(function (){
+       addButtonEvent();
+    });
+</script>
 </body>
 </html>

@@ -83,4 +83,10 @@
     <select id="getProductHistory" resultType="com.spring.stockflow.dto.history.InventoryHistoryDTO">
         SELECT * FROM v_inventory_history where product_id = #{id} LIMIT 5
     </select>
+
+    <select id="existsInventoryHistory" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1 FROM v_inventory_history WHERE product_id = #{id}
+        )
+    </select>
 </mapper>

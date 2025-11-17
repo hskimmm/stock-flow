@@ -24,4 +24,6 @@ public interface ProductService {
     int getTotalCount(Pagination pagination);
 
     List<InventoryHistoryDTO> getProductHistory(Long id);
+
+    ApiResponse<?> existsInventoryHistory(Long id);
 }
