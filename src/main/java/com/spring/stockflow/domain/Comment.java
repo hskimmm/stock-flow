@@ -20,4 +20,5 @@ public class Comment {
     private LocalDateTime regDate; //등록일시
     private LocalDateTime modDate; //수정일시
     private String delYn; //삭제여부
+    private String userName; //등록자명
 }

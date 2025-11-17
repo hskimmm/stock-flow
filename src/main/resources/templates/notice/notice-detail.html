@@ -51,7 +51,7 @@
 
                     <!-- 댓글 영역 -->
                     <div class="comment-section">
-                        <h4 style="margin-bottom: 20px; color: #2c3e50;">💬 댓글 (3)</h4>
+                        <h4 style="margin-bottom: 20px; color: #2c3e50;"></h4>
 
                         <!-- 댓글 작성 -->
                         <div class="comment-write">
@@ -62,56 +62,7 @@
                         </div>
 
                         <!-- 댓글 목록 -->
-                        <div class="comment-list">
-                            <div class="comment-item">
-                                <div class="comment-header">
-                                    <div>
-                                        <span class="comment-author">김철수</span>
-                                        <span class="comment-date" style="margin-left: 10px;">2024-10-28 10:30</span>
-                                    </div>
-                                    <div class="comment-actions">
-                                        <button>수정</button>
-                                        <button>삭제</button>
-                                    </div>
-                                </div>
-                                <div class="comment-content">
-                                    점검 시간이 좀 길게 예정되어 있네요. 혹시 더 빨리 끝날 가능성도 있나요?
-                                </div>
-                            </div>
-
-                            <div class="comment-item">
-                                <div class="comment-header">
-                                    <div>
-                                        <span class="comment-author">관리자</span>
-                                        <span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 5px;">작성자</span>
-                                        <span class="comment-date" style="margin-left: 10px;">2024-10-28 11:15</span>
-                                    </div>
-                                    <div class="comment-actions">
-                                        <button>수정</button>
-                                        <button>삭제</button>
-                                    </div>
-                                </div>
-                                <div class="comment-content">
-                                    작업 상황에 따라 조기 종료 가능성도 있습니다. 진행 상황은 실시간으로 공유드리겠습니다.
-                                </div>
-                            </div>
-
-                            <div class="comment-item">
-                                <div class="comment-header">
-                                    <div>
-                                        <span class="comment-author">이영희</span>
-                                        <span class="comment-date" style="margin-left: 10px;">2024-10-28 14:22</span>
-                                    </div>
-                                    <div class="comment-actions">
-                                        <button>수정</button>
-                                        <button>삭제</button>
-                                    </div>
-                                </div>
-                                <div class="comment-content">
-                                    안내 감사합니다. 미리 작업 마무리하도록 하겠습니다!
-                                </div>
-                            </div>
-                        </div>
+                        <div class="comment-list"></div>
                     </div>
 
                     <div class="form-actions">
@@ -137,6 +88,9 @@
     const csrfHeader = $("meta[name='_csrf_header']").attr('content');
 
     const pageForm = $("#pageForm");
+    const noticeId = $("input[name='noticeId']").val();
+
+    const commentUL = $(".comment-list");
 
     //버튼 이벤트 처리
     function addButtonEvent() {
@@ -200,7 +154,6 @@
 
     //댓글 등록
     function createComment() {
-        let noticeId = $("input[name='noticeId']").val();
         let userId = $("input[name='regUserId']").val();
         let content = $("textarea[name='commentContent']").val().trim();
 
@@ -225,7 +178,8 @@
            },
            success: function (response) {
                if (response.success) {
-                   alert(response.message);
+                   $("#commentContent").val('');
+                   loadCommentList();
                }
            },
            error: function (xhr, status, error) {
@@ -261,6 +215,60 @@
 
     //댓글 목록 조회
     function loadCommentList() {
+        $.ajax({
+           url: `/comment/${noticeId}`,
+           method: 'GET',
+           success: function (response) {
+               if (response.success) {
+                   showCommentList(response.data);
+               }
+           },
+           error: function (xhr, status, error) {
+               let response;
+               try {
+                   response = JSON.parse(xhr.responseText);
+               } catch (e) {
+                   alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                   return e;
+               }
+
+               let errorMessage = response.message;
+               if (xhr.status === 404) {
+                   alert(errorMessage);
+                   return false;
+               } else if (xhr.status === 500) {
+                   alert(errorMessage);
+                   return false;
+               }
+           }
+        });
+    }
+
+    //댓글 HTML 동적 생성
+    function showCommentList(data) {
+        let str = '';
+        let count = 0;
+        for (const comment of data) {
+            str += `<div class="comment-item">
+                        <div class="comment-header">
+                            <div>
+                                <span class="comment-author">${comment.userName}</span>
+                                <span class="comment-date" style="margin-left: 10px;">${new Date(comment.regDate).toISOString().slice(0, 19).replace('T', ' ')}</span>
+                            </div>
+                            <div class="comment-actions">
+                                <button class="btn-edit">수정</button>
+                                <button class="btn-delete">삭제</button>
+                            </div>
+                        </div>
+                        <div class="comment-content">
+                            ${comment.content}
+                        </div>
+                    </div>
+                    `;
+            count++;
+        }
+        commentUL.html(str);
+        $(".comment-section h4").text("💬 댓글 " + "(" + count + ")");
     }
 
     //init

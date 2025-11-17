@@ -7,10 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/comment")
@@ -23,6 +20,12 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<ApiResponse<?>> addComment(@Valid @RequestBody CreateCommentDTO createCommentDTO) {
         ApiResponse<?> response = commentService.addComment(createCommentDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> getComments(@PathVariable(value = "id") Long id) {
+        ApiResponse<?> response = commentService.getComments(id);
         return ResponseEntity.ok(response);
     }
 }

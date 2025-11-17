@@ -16,4 +16,13 @@
             #{content}
         )
     </insert>
+
+    <select id="getComments" resultType="comment">
+        SELECT nc.id, nc.notice_id, nc.content, nc.reg_user_id, nc.reg_date, nc.mod_date, nc.del_yn, u.user_name
+        FROM notice_comment nc
+        INNER JOIN user u
+        ON nc.reg_user_id = u.id
+        WHERE nc.notice_id = #{id}
+        AND nc.del_yn = 'N';
+    </select>
 </mapper>

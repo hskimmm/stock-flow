@@ -6,4 +6,6 @@ import jakarta.validation.Valid;
 
 public interface CommentService {
     ApiResponse<?> addComment(@Valid CreateCommentDTO createCommentDTO);
+
+    ApiResponse<?> getComments(Long id);
 }

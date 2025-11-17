@@ -2,6 +2,7 @@ package com.spring.stockflow.service.comment;
 
 import com.spring.stockflow.domain.Comment;
 import com.spring.stockflow.dto.comment.CreateCommentDTO;
+import com.spring.stockflow.exception.NoticeNotFoundException;
 import com.spring.stockflow.mapper.comment.CommentMapper;
 import com.spring.stockflow.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +38,25 @@ public class CommentServiceImpl implements CommentService {
         } catch (Exception e) {
             log.error("댓글 등록(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("댓글 등록 중 오류가 발생하였습니다");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public ApiResponse<?> getComments(Long id) {
+        if (id == null) {
+            throw new NoticeNotFoundException("공지사항이 존재하지 않습니다");
+        }
+
+        try {
+            List<Comment> commentList = commentMapper.getComments(id);
+            return new ApiResponse<>(true, "댓글목록조회", commentList);
+        } catch (DataAccessException e) {
+            log.error("댓글 조회(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("댓글 조회 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("댓글 조회(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("댓글 조회 중 오류가 발생하였습니다");
         }
     }
 }
