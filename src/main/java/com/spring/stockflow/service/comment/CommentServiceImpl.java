@@ -2,6 +2,8 @@ package com.spring.stockflow.service.comment;
 
 import com.spring.stockflow.domain.Comment;
 import com.spring.stockflow.dto.comment.CreateCommentDTO;
+import com.spring.stockflow.dto.comment.EditCommentDTO;
+import com.spring.stockflow.exception.CommentNotFoundException;
 import com.spring.stockflow.exception.NoticeNotFoundException;
 import com.spring.stockflow.mapper.comment.CommentMapper;
 import com.spring.stockflow.response.ApiResponse;
@@ -57,6 +59,30 @@ public class CommentServiceImpl implements CommentService {
         } catch (Exception e) {
             log.error("댓글 조회(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("댓글 조회 중 오류가 발생하였습니다");
+        }
+    }
+
+    @Transactional
+    @Override
+    public ApiResponse<?> editComment(EditCommentDTO editCommentDTO) {
+        if (editCommentDTO.getId() == null) {
+            throw new CommentNotFoundException("댓글이 존재하지 않습니다");
+        }
+
+        try {
+            Comment comment = Comment.builder()
+                    .id(editCommentDTO.getId())
+                    .content(editCommentDTO.getContent())
+                    .build();
+
+            commentMapper.editComment(comment);
+            return new ApiResponse<>(true, "댓글을 수정하였습니다");
+        } catch (DataAccessException e) {
+            log.error("댓글 수정(데이터베이스 오류) = {}", e.getMessage());
+            throw new RuntimeException("댓글 수정 중 오류가 발생하였습니다");
+        } catch (Exception e) {
+            log.error("댓글 수정(기타 오류) = {}", e.getMessage());
+            throw new RuntimeException("댓글 수정 중 오류가 발생하였습니다");
         }
     }
 }

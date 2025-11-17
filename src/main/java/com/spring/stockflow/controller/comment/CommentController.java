@@ -1,6 +1,7 @@
 package com.spring.stockflow.controller.comment;
 
 import com.spring.stockflow.dto.comment.CreateCommentDTO;
+import com.spring.stockflow.dto.comment.EditCommentDTO;
 import com.spring.stockflow.response.ApiResponse;
 import com.spring.stockflow.service.comment.CommentService;
 import jakarta.validation.Valid;
@@ -28,4 +29,11 @@ public class CommentController {
         ApiResponse<?> response = commentService.getComments(id);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping
+    public ResponseEntity<ApiResponse<?>> editComment(@Valid @RequestBody EditCommentDTO editCommentDTO) {
+        ApiResponse<?> response = commentService.editComment(editCommentDTO);
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -25,4 +25,10 @@
         WHERE nc.notice_id = #{id}
         AND nc.del_yn = 'N';
     </select>
+
+    <update id="editComment">
+        UPDATE notice_comment SET
+        content = #{content}
+        WHERE id = #{id}
+    </update>
 </mapper>

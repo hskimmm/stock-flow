@@ -111,6 +111,34 @@
            e.preventDefault();
            createComment();
         });
+
+        $(".comment-list").on("click", ".btn-comment-edit", function (e) {
+            const commentItem = $(this).closest('.comment-item');
+            const commentId = commentItem.data('comment-id');
+            const currentContent = commentItem.find('.comment-content').text().trim();
+
+            commentItem.find('.comment-content').html(`
+                <textarea class="edit-textarea" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; min-height: 80px; font-size: 14px; font-family: inherit; line-height: 1.6; resize: vertical;" name="editContent">${currentContent}</textarea>
+                <div style="margin-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button class="btn btn-primary btn-comment-save" data-comment-id="${commentId}" style="padding: 8px 16px; font-size: 14px;">저장</button>
+                    <button class="btn-cancel-edit" style="padding: 8px 16px; border: 1px solid #ddd; background: white; color: #7f8c8d; border-radius: 5px; cursor: pointer; font-size: 14px;">취소</button>
+                </div>
+            `);
+
+            commentItem.find('.comment-actions').hide();
+        });
+
+        $(".comment-list").on("click", ".btn-comment-save", function (e) {
+            e.preventDefault();
+            let commendId = $(this).data('comment-id');
+            let editContent = $("textarea[name='editContent']").val().trim();
+            editComment(commendId, editContent);
+        });
+
+        $(".comment-list").on("click", ".btn-cancel-edit", function (e) {
+            e.preventDefault();
+            loadCommentList();
+        });
     }
 
     //공지사항 삭제
@@ -249,15 +277,15 @@
         let str = '';
         let count = 0;
         for (const comment of data) {
-            str += `<div class="comment-item">
+            str += `<div class="comment-item" data-comment-id="${comment.id}">
                         <div class="comment-header">
                             <div>
                                 <span class="comment-author">${comment.userName}</span>
                                 <span class="comment-date" style="margin-left: 10px;">${new Date(comment.regDate).toISOString().slice(0, 19).replace('T', ' ')}</span>
                             </div>
                             <div class="comment-actions">
-                                <button class="btn-edit">수정</button>
-                                <button class="btn-delete">삭제</button>
+                                <button class="btn-comment-edit">수정</button>
+                                <button class="btn-comment-delete">삭제</button>
                             </div>
                         </div>
                         <div class="comment-content">
@@ -269,6 +297,61 @@
         }
         commentUL.html(str);
         $(".comment-section h4").text("💬 댓글 " + "(" + count + ")");
+    }
+
+    //댓글 수정
+    function editComment(commendId, editContent) {
+        if (!editContent) {
+            alert("댓글 내용을 입력하세요");
+            return false;
+        }
+
+        const data = {
+            id : commendId,
+            content : editContent
+        }
+
+        $.ajax({
+           url: '/comment',
+           method: 'PUT',
+           data: JSON.stringify(data),
+           contentType: 'application/json',
+           beforeSend: function (xhr) {
+               xhr.setRequestHeader(csrfHeader, csrfToken);
+           },
+           success: function (response) {
+               if (response.success) {
+                   loadCommentList();
+               }
+           },
+           error: function (xhr, status, error) {
+               let response;
+               try {
+                   response = JSON.parse(xhr.responseText);
+               } catch (e) {
+                   alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                   return e;
+               }
+
+               let errorMessage = response.message;
+               if (xhr.status === 400) {
+                   let errors = response.items;
+                   if (errors['id']) {
+                       alert(errors['id']);
+                       return false;
+                   } else if (errors['content']) {
+                       alert(errors['content']);
+                       return false;
+                   }
+               } else if (xhr.status === 404) {
+                   alert(errorMessage);
+                   return false;
+               } else if (xhr.status === 500) {
+                   alert(errorMessage);
+                   return false;
+               }
+           }
+        });
     }
 
     //init
