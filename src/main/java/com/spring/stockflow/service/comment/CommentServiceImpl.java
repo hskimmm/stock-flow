@@ -7,6 +7,7 @@ import com.spring.stockflow.exception.CommentNotFoundException;
 import com.spring.stockflow.exception.NoticeNotFoundException;
 import com.spring.stockflow.mapper.comment.CommentMapper;
 import com.spring.stockflow.response.ApiResponse;
+import com.spring.stockflow.util.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataAccessException;
@@ -45,13 +46,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional(readOnly = true)
     @Override
-    public ApiResponse<?> getComments(Long id) {
+    public ApiResponse<?> getComments(Long id, Pagination pagination) {
         if (id == null) {
             throw new NoticeNotFoundException("공지사항이 존재하지 않습니다");
         }
 
         try {
-            List<Comment> commentList = commentMapper.getComments(id);
+            List<Comment> commentList = commentMapper.getComments(id, pagination);
             return new ApiResponse<>(true, "댓글목록조회", commentList);
         } catch (DataAccessException e) {
             log.error("댓글 조회(데이터베이스 오류) = {}", e.getMessage());
@@ -103,5 +104,11 @@ public class CommentServiceImpl implements CommentService {
             log.error("댓글 삭제(기타 오류) = {}", e.getMessage());
             throw new RuntimeException("댓글 삭제 중 오류가 발생하였습니다");
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getTotalComment(Long id) {
+        return commentMapper.getTotalComment(id);
     }
 }

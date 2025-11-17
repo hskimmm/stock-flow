@@ -49,6 +49,12 @@
                         </div>
                     </div>
 
+                    <div class="form-actions">
+                        <button class="btn btn-primary" th:onclick="|location.href='@{/notice/edit/{id}(id=${notice.id}, pageNum=${pagination.pageNum}, keyword=${pagination.keyword})}'|">수정</button>
+                        <button class="btn btn-danger btn-delete">삭제</button>
+                        <button class="btn btn-cancel" style="background: #95a5a6; color: white;">목록</button>
+                    </div>
+
                     <!-- 댓글 영역 -->
                     <div class="comment-section">
                         <h4 style="margin-bottom: 20px; color: #2c3e50;"></h4>
@@ -63,12 +69,8 @@
 
                         <!-- 댓글 목록 -->
                         <div class="comment-list"></div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button class="btn btn-primary" th:onclick="|location.href='@{/notice/edit/{id}(id=${notice.id}, pageNum=${pagination.pageNum}, keyword=${pagination.keyword})}'|">수정</button>
-                        <button class="btn btn-danger btn-delete">삭제</button>
-                        <button class="btn btn-cancel" style="background: #95a5a6; color: white;">목록</button>
+                        <!-- 페이징 -->
+                        <div class="pagination"></div>
                     </div>
                 </div>
             </div>
@@ -89,9 +91,12 @@
 
     const pageForm = $("#pageForm");
     const commentUL = $(".comment-list");
+    const pageUL = $(".pagination");
 
     const noticeId = $("input[name='noticeId']").val();
     const currentUserId = $("input[name='regUserId']").val();
+
+    let currentPageNum;
 
     //버튼 이벤트 처리
     function addButtonEvent() {
@@ -148,6 +153,13 @@
                let commentId = $(this).data('comment-id');
                deleteComment(commentId);
            }
+        });
+
+        pageUL.on("click", "a", function (e) {
+            e.preventDefault();
+            const pageNumParam = $(this).attr('href');
+            currentPageNum = pageNumParam;
+            loadCommentList(pageNumParam);
         });
     }
 
@@ -252,13 +264,15 @@
     }
 
     //댓글 목록 조회
-    function loadCommentList() {
+    function loadCommentList(pageNumParam) {
+        let pageNum = pageNumParam || 1;
+
         $.ajax({
-           url: `/comment/${noticeId}`,
+           url: `/comment/${noticeId}?pageNum=${pageNum}`,
            method: 'GET',
            success: function (response) {
                if (response.success) {
-                   showCommentList(response.data);
+                   showCommentList(response.items);
                }
            },
            error: function (xhr, status, error) {
@@ -286,10 +300,8 @@
     function showCommentList(data) {
         let str = '';
         let count = 0;
-        for (const comment of data) {
+        for (const comment of data.commentList) {
             let actionButtons = '';
-            console.log(comment);
-            console.log(currentUserId);
             if (currentUserId == comment.regUserId) {
                 actionButtons = `
                 <div class="comment-actions">
@@ -315,6 +327,28 @@
         }
         commentUL.html(str);
         $(".comment-section h4").text("💬 댓글 " + "(" + count + ")");
+
+        const page = data.page;
+        const startPage = page.startPage;
+        const endPage = page.endPage;
+        const prev = page.prev;
+        const next = page.next;
+        const pageNum = page.pagination.pageNum;
+
+        let pageStr = '';
+
+        if (prev) {
+            pageStr += `<div class="page-item"><a href="${startPage - 1}">Previous</a></div>`;
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageStr += `<div class="page-item"><a class="${i === pageNum ? 'active' : ''}" href="${i}">${i}</a></div>`;
+        }
+
+        if (next) {
+            pageStr += `<div class="page-item"><a href="${endPage + 1}">Next</a></div>`;
+        }
+        pageUL.html(pageStr);
     }
 
     //댓글 수정
@@ -325,21 +359,21 @@
         }
 
         const data = {
-            id : commendId,
-            content : editContent
+            id: commendId,
+            content: editContent
         }
 
         $.ajax({
-           url: '/comment',
-           method: 'PUT',
-           data: JSON.stringify(data),
-           contentType: 'application/json',
+            url: '/comment',
+            method: 'PUT',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
            beforeSend: function (xhr) {
                xhr.setRequestHeader(csrfHeader, csrfToken);
            },
            success: function (response) {
                if (response.success) {
-                   loadCommentList();
+                   loadCommentList(currentPageNum);
                }
            },
            error: function (xhr, status, error) {
@@ -385,7 +419,7 @@
            success: function (response) {
                if (response.success) {
                    alert(response.message);
-                   loadCommentList();
+                   loadCommentList(currentPageNum);
                }
            },
            error: function (xhr, status, error) {

@@ -23,7 +23,9 @@
         INNER JOIN user u
         ON nc.reg_user_id = u.id
         WHERE nc.notice_id = #{id}
-        AND nc.del_yn = 'N';
+        AND nc.del_yn = 'N'
+        ORDER BY id DESC
+        LIMIT #{pagination.skip}, #{pagination.amount}
     </select>
 
     <update id="editComment">
@@ -37,4 +39,8 @@
         del_yn = 'Y'
         WHERE id = #{id}
     </update>
+
+    <select id="getTotalComment" resultType="int">
+        SELECT COUNT(*) FROM notice_comment WHERE del_yn = 'N' AND notice_id = #{id}
+    </select>
 </mapper>
