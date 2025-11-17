@@ -159,6 +159,13 @@ public class ProductServiceImpl implements ProductService{
         }
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public ApiResponse<?> existsInventoryHistory(Long id) {
+        boolean exists = productMapper.existsInventoryHistory(id);
+        return new ApiResponse<>(true, "상품 입출고 내역 조회", exists);
+    }
+
     //상품 코드 생성
     private String generateProductCode() {
         String dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));

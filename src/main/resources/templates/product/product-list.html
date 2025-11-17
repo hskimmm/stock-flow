@@ -91,7 +91,8 @@
            let type = $(this).data('type');
            let id = $(this).data('id');
            if (confirm('정말 이 ' + type + '을(를) 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.')) {
-               deleteProduct(id);
+               // deleteProduct(id);
+               existsInventoryHistory(id);
            }
         });
 
@@ -148,6 +149,37 @@
                 } else if (xhr.status === 500) {
                     alert(errorMessage);
                     return false;
+                }
+            }
+        });
+    }
+
+    //상품 삭제 전 입출고 이력 확인
+    function existsInventoryHistory(productId) {
+        $.ajax({
+            url: `/product/exists-inventory-history/${productId}`,
+            method: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    if (response.data) {
+                        alert("상품 입출고 이력이 있어 삭제할 수 없습니다.");
+                        return false;
+                    }
+                    deleteProduct(productId);
+                }
+            },
+            error: function (xhr, status, error) {
+                let response;
+                try {
+                    response = JSON.parse(xhr.responseText);
+                } catch (e) {
+                    alert("응답 데이터 처리 중 오류가 발생하였습니다");
+                    return e;
+                }
+
+                let errorMessage= response.message;
+                if (xhr.status === 500) {
+                    alert(errorMessage);
                 }
             }
         });
