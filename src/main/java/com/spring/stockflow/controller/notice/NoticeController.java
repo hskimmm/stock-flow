@@ -44,12 +44,15 @@ public class NoticeController {
     private String uploadPath;
 
     @GetMapping
-    public String getNotices(@ModelAttribute(value = "pagination") Pagination pagination, Model model) {
+    public String getNotices(@ModelAttribute(value = "pagination") Pagination pagination,
+                             @AuthenticationPrincipal UserDTO userDTO,
+                             Model model) {
         List<Notice> noticeList = noticeService.getNotices(pagination);
         PageDTO pageDTO = new PageDTO(pagination, noticeService.getTotalNotice(pagination));
 
         model.addAttribute("noticeList", noticeList);
         model.addAttribute("page", pageDTO);
+        model.addAttribute("userRole", userDTO.getRole());
         model.addAttribute("menuActive", "notice");
         return "notice/notice-list";
     }

@@ -14,7 +14,7 @@
         <div class="content">
             <div id="notice-list">
                 <div class="table-header">
-                    <button class="btn btn-primary" th:onclick="|location.href='@{/notice/add(pageNum=${page.pagination.pageNum}, keyword=${pagination.keyword})}'|">+ 공지사항 작성</button>
+                    <button class="btn btn-primary"  th:if="${userRole == 'ADMIN'}" th:onclick="|location.href='@{/notice/add(pageNum=${page.pagination.pageNum}, keyword=${pagination.keyword})}'|">+ 공지사항 작성</button>
                     <div class="search-box">
                         <input type="text" name="keyword" th:value="${pagination.keyword}" placeholder="제목 또는 내용 검색">
                         <button class="btn btn-primary btn-search">검색</button>

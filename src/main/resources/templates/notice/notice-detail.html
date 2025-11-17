@@ -88,9 +88,10 @@
     const csrfHeader = $("meta[name='_csrf_header']").attr('content');
 
     const pageForm = $("#pageForm");
-    const noticeId = $("input[name='noticeId']").val();
-
     const commentUL = $(".comment-list");
+
+    const noticeId = $("input[name='noticeId']").val();
+    const currentUserId = $("input[name='regUserId']").val();
 
     //버튼 이벤트 처리
     function addButtonEvent() {
@@ -286,22 +287,30 @@
         let str = '';
         let count = 0;
         for (const comment of data) {
+            let actionButtons = '';
+            console.log(comment);
+            console.log(currentUserId);
+            if (currentUserId == comment.regUserId) {
+                actionButtons = `
+                <div class="comment-actions">
+                    <button class="btn-comment-edit">수정</button>
+                    <button class="btn-comment-delete" data-comment-id="${comment.id}">삭제</button>
+                </div>
+            `;
+            }
             str += `<div class="comment-item" data-comment-id="${comment.id}">
-                        <div class="comment-header">
-                            <div>
-                                <span class="comment-author">${comment.userName}</span>
-                                <span class="comment-date" style="margin-left: 10px;">${new Date(comment.regDate).toISOString().slice(0, 19).replace('T', ' ')}</span>
-                            </div>
-                            <div class="comment-actions">
-                                <button class="btn-comment-edit">수정</button>
-                                <button class="btn-comment-delete" data-comment-id="${comment.id}">삭제</button>
-                            </div>
+                    <div class="comment-header">
+                        <div>
+                            <span class="comment-author">${comment.userName}</span>
+                            <span class="comment-date" style="margin-left: 10px;">${new Date(comment.regDate).toISOString().slice(0, 19).replace('T', ' ')}</span>
                         </div>
-                        <div class="comment-content">
-                            ${comment.content}
-                        </div>
+                        ${actionButtons}
                     </div>
-                    `;
+                    <div class="comment-content">
+                        ${comment.content}
+                    </div>
+                </div>
+                `;
             count++;
         }
         commentUL.html(str);
