@@ -165,28 +165,28 @@ src/
 
 |                                            로그인                                            |                                              대시보드                                              |
 |:-----------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------:|
-| <img src="src/main/resources/static/images/login.gif" width="390" height="350" alt="로그인"> | <img src="src/main/resources/static/images/dashboard.gif" width="390" height="350" alt="대시보드"> |
+| <img src="src/main/resources/static/images/login.gif" width="380" height="350" alt="로그인"> | <img src="src/main/resources/static/images/dashboard.gif" width="380" height="350" alt="대시보드"> |
 
 |                                              상품 목록                                               |                                              상품 등록                                              |
 |:------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
-| <img src="src/main/resources/static/images/productList.gif" width="390" height="350" alt="상품목록"> | <img src="src/main/resources/static/images/addProduct.gif" width="390" height="350" alt="상품등록"> |
+| <img src="src/main/resources/static/images/productList.gif" width="380" height="350" alt="상품목록"> | <img src="src/main/resources/static/images/addProduct.gif" width="380" height="350" alt="상품등록"> |
 
 |                                              입고 내역                                               |                                              입고 등록                                              |
 |:------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
-| <img src="src/main/resources/static/images/inboundList.gif" width="390" height="350" alt="입고내역"> | <img src="src/main/resources/static/images/addInbound.gif" width="390" height="350" alt="입고등록"> |
+| <img src="src/main/resources/static/images/inboundList.gif" width="380" height="350" alt="입고내역"> | <img src="src/main/resources/static/images/addInbound.gif" width="380" height="350" alt="입고등록"> |
 
 |                                               출고 내역                                               |                                              출고 등록                                               |
 |:-------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------:|
-| <img src="src/main/resources/static/images/outboundList.gif" width="390" height="350" alt="출고내역"> | <img src="src/main/resources/static/images/addOutbound.gif" width="390" height="350" alt="출고등록"> |
+| <img src="src/main/resources/static/images/outboundList.gif" width="380" height="350" alt="출고내역"> | <img src="src/main/resources/static/images/addOutbound.gif" width="380" height="350" alt="출고등록"> |
 
 |                                               재고 현황                                                |                                              통계                                               |
 |:--------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------:|
-| <img src="src/main/resources/static/images/inventoryList.gif" width="390" height="350" alt="재고현황"> | <img src="src/main/resources/static/images/statistics.gif" width="390" height="350" alt="통계"> |
+| <img src="src/main/resources/static/images/inventoryList.gif" width="380" height="350" alt="재고현황"> | <img src="src/main/resources/static/images/statistics.gif" width="380" height="350" alt="통계"> |
 
 |                                          사용자 관리 (관리자)                                           |                                          사용자 추가 (관리자)                                          |
 |:-----------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------:|
-| <img src="src/main/resources/static/images/adminList.gif" width="390" height="350" alt="사용자목록"> | <img src="src/main/resources/static/images/addAdmin.gif" width="390" height="350" alt="사용자추가"> |
+| <img src="src/main/resources/static/images/adminList.gif" width="380" height="350" alt="사용자목록"> | <img src="src/main/resources/static/images/addAdmin.gif" width="380" height="350" alt="사용자추가"> |
 
 |                                              공지사항 목록                                              |                                             공지사항 등록                                              |
 |:-------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------:|
-| <img src="src/main/resources/static/images/noticeList.gif" width="390" height="350" alt="공지사항목록"> | <img src="src/main/resources/static/images/addNotice.gif" width="390" height="350" alt="공지사항등록"> |
+| <img src="src/main/resources/static/images/noticeList.gif" width="380" height="350" alt="공지사항목록"> | <img src="src/main/resources/static/images/addNotice.gif" width="380" height="350" alt="공지사항등록"> |
